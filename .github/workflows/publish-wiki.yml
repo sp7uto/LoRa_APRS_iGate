@@ -1,0 +1,56 @@
+name: Publish iGate Wiki
+on:
+  push:
+    branches: [feature/wifi-network-management]
+    paths:
+      - 'docs/wifi-network-management/wiki/**'
+      - '.github/workflows/publish-wiki.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: igate-wiki-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate bilingual source pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          src=docs/wifi-network-management/wiki
+          for page in Home Configuration Hardware Installation Network-Failover APRS-IS Backup-and-Restore Testing Troubleshooting Changelog Roadmap _Sidebar _Footer; do
+            test -s "$src/$page.md"
+          done
+      - name: Synchronize Wiki without deleting unrelated pages
+        shell: bash
+        env:
+          REPOSITORY_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          url="https://x-access-token:${REPOSITORY_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+          if ! git ls-remote "$url" HEAD >/dev/null 2>&1; then
+            echo "::error::Wiki repository unavailable to the repository token. Check Wiki initialization and Actions write permissions."
+            exit 1
+          fi
+          git clone --quiet "$url" "$RUNNER_TEMP/wiki-live"
+          cd "$RUNNER_TEMP/wiki-live"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # These thirteen pages were already adopted manually as this project's
+          # versioned Wiki. Preserve existing Git history and all unrelated pages.
+          for page in Home Configuration Hardware Installation Network-Failover APRS-IS Backup-and-Restore Testing Troubleshooting Changelog Roadmap _Sidebar _Footer; do
+            cp "$GITHUB_WORKSPACE/docs/wifi-network-management/wiki/$page.md" "$page.md"
+            git add -- "$page.md"
+          done
+          if git diff --cached --quiet; then
+            echo "Wiki already up to date"
+            exit 0
+          fi
+          git commit -m "docs: sync bilingual iGate Wiki from ${GITHUB_SHA:0:12}"
+          git push origin HEAD
+          echo "Wiki synchronization complete"
