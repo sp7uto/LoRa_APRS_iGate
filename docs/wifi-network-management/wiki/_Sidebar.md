@@ -5,6 +5,7 @@
 - 💾 [Instalacja / Installation](Installation)
 - ⚙️ [Konfiguracja / Configuration](Configuration)
 - 🧰 [Generator konfiguracji / Generator](Configuration-Generator)
+- ▶️ [Uruchom / Launch (Pages)](https://sp7uto.github.io/LoRa_APRS_iGate/config-generator/)
 - 🌐 [Network Failover](Network-Failover)
 - 📶 [APRS-IS](APRS-IS)
 - 🗄️ [Backup & Restore](Backup-and-Restore)

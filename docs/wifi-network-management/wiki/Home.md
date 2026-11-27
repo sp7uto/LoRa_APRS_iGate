@@ -19,6 +19,8 @@ Rozszerzenie o indywidualną adresację IPv4 i zarządzanie wieloma sieciami Wi-
 
 Per-network IPv4 addressing and Wi-Fi management for unattended APRS gateways. The upstream main branch is preserved; our changes live in a separate development branch. This is not a production release yet.
 
+[**Uruchom generator / Launch configuration generator**](https://sp7uto.github.io/LoRa_APRS_iGate/config-generator/) — GitHub Pages (requires activation / wymaga aktywacji).
+
 ## 📚 Dokumentacja / Documentation
 
 - [Hardware](Hardware)

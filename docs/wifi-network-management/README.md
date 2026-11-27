@@ -50,4 +50,6 @@ Generated from source during Wiki publishing; example values only. / Generowane 
 
 ## Configuration generator / Generator konfiguracji
 
+[**Uruchom generator / Launch configuration generator**](https://sp7uto.github.io/LoRa_APRS_iGate/config-generator/) — GitHub Pages (requires activation / wymaga aktywacji).
+
 [Standalone HTML](../config-generator/index.html) · [Wiki PL/EN](https://github.com/sp7uto/LoRa_APRS_iGate/wiki/Configuration-Generator). Download raw HTML and open offline. / Pobierz HTML i otwórz lokalnie. RX-only new configuration or import/edit existing ESP32 backup with optional station profiles and masked diff; no server or telemetry.

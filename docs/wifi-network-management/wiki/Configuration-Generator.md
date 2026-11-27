@@ -1,5 +1,7 @@
 # Generator konfiguracji / Configuration Generator
 
+[**Uruchom generator / Launch configuration generator**](https://sp7uto.github.io/LoRa_APRS_iGate/config-generator/) — GitHub Pages (requires activation / wymaga aktywacji).
+
 [Standalone HTML / Samodzielny HTML](https://github.com/sp7uto/LoRa_APRS_iGate/blob/feature/wifi-network-management/docs/config-generator/index.html) — use Download raw file and open locally. / Pobierz surowy plik i otwórz lokalnie.
 
 ## PL
