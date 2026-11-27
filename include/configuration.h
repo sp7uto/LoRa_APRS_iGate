@@ -28,6 +28,12 @@ class WiFi_AP {
 public:
     String  ssid;
     String  password;
+    bool dhcp = true;
+    String ip;
+    String gateway;
+    String subnet;
+    String dns1;
+    String dns2;
 };
 
 class WiFi_Auto_AP {

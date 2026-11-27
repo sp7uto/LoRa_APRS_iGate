@@ -96,6 +96,12 @@ bool applyConfigForm(const String &contentType, const String &body) {
             WiFi_AP wifiap;
             wifiap.ssid                   = getParamStringSafe("wifi.AP." + String(i) + ".ssid");
             wifiap.password               = getParamStringSafe("wifi.AP." + String(i) + ".password");
+            wifiap.dhcp = getParamStringSafe("wifi.AP." + String(i) + ".dhcp", "1") != "0";
+            wifiap.ip = getParamStringSafe("wifi.AP." + String(i) + ".ip");
+            wifiap.gateway = getParamStringSafe("wifi.AP." + String(i) + ".gateway");
+            wifiap.subnet = getParamStringSafe("wifi.AP." + String(i) + ".subnet");
+            wifiap.dns1 = getParamStringSafe("wifi.AP." + String(i) + ".dns1");
+            wifiap.dns2 = getParamStringSafe("wifi.AP." + String(i) + ".dns2");
 
             Config.wifiAPs.push_back(wifiap);
         }

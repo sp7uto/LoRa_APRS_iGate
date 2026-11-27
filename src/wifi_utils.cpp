@@ -92,7 +92,7 @@ namespace WIFI_Utils {
         for (size_t i = 0; i < Config.wifiAPs.size(); i++) {
             const WiFi_AP& wifiAP = Config.wifiAPs[i];
             if (wifiAP.ssid.isEmpty()) continue;
-            networkManager->addWiFiNetwork(wifiAP.ssid, wifiAP.password);
+            networkManager->addWiFiNetwork(wifiAP.ssid, wifiAP.password, wifiAP.dhcp, wifiAP.ip, wifiAP.gateway, wifiAP.subnet, wifiAP.dns1, wifiAP.dns2);
         }
 
         if (!networkManager->hasWiFiNetworks()) {

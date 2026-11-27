@@ -77,34 +77,7 @@ function loadSettings(settings) {
     const wifiNetworks = settings.wifi.AP || [];
     const networksContainer = document.querySelector(".list-networks");
 
-    let networkCount = 0;
-
-    wifiNetworks.forEach((network) => {
-        const networkElement = document.createElement("div");
-        networkElement.classList.add("row", "network", "border-bottom", "py-2");
-
-        // Increment the name, id, and for attributes
-        const attributeName = `wifi.AP.${networkCount}`;
-        networkElement.innerHTML = `
-                  <div class="form-floating col-5 px-1 mb-2">
-                    <input type="text" class="form-control form-control-sm" name="${attributeName}.ssid" id="${attributeName}.ssid" value="${network.ssid}">
-                    <label for="${attributeName}.ssid">SSID</label>
-                  </div>
-                  <div class="form-floating col-5 px-1 mb-2">
-                    <input type="password" class="form-control form-control-sm" name="${attributeName}.password" id="${attributeName}.password" value="${network.password}">
-                    <label for="${attributeName}.password">Passphrase</label>
-                  </div>
-                  <div class="col-2 d-flex align-items-center justify-content-end">
-                    <div class="btn-group" role="group">
-                      <button type="button" class="btn btn-sm btn-danger" title="Delete" onclick="return this.parentNode.parentNode.parentNode.remove();"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-              <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
-            </svg><span class="visually-hidden">Delete</span></button>
-                    </div>
-                  </div>
-                `;
-        networksContainer.appendChild(networkElement);
-        networkCount++;
-    });
+    wifiNetworks.forEach(network => appendWiFiNetwork(network));
     document.getElementById("startupDelay").value                       = settings.other.startupDelay;
 
     // APRS-IS
@@ -507,41 +480,63 @@ function toggleWiFiAutoAPFields() {
     if (autoAPConfig) autoAPConfig.style.display = isEnabled ? 'block' : 'none';
 }
 
-document.querySelector(".new button").addEventListener("click", function () {
-    const networksContainer = document.querySelector(".list-networks");
-
-    let networkCount = document.querySelectorAll(".network").length;
-
-    const networkElement = document.createElement("div");
-
-    networkElement.classList.add("row", "network", "border-bottom", "py-2");
-
-    // Increment the name, id, and for attributes
-    const attributeName = `wifi.AP.${networkCount}`;
-    networkElement.innerHTML = `
-                <div class="form-floating col-6 col-md-5 px-1 mb-2">
-                <input type="text" class="form-control form-control-sm" name="${attributeName}.ssid" id="${attributeName}.ssid" placeholder="" >
-                <label for="${attributeName}.ssid">SSID</label>
-                </div>
-                <div class="form-floating col-6 col-md-5 px-1 mb-2">
-                <input type="password" class="form-control form-control-sm" name="${attributeName}.password" id="${attributeName}.password" placeholder="">
-                <label for="${attributeName}.password">Passphrase</label>
-                </div>
-                <div class="col-4 col-md-2 d-flex align-items-center justify-content-end">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-danger" title="Delete" onclick="return this.parentNode.parentNode.parentNode.remove();"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
-        </svg><span class="visually-hidden">Delete</span></button>
-                </div>
-                </div>
-            `;
-    networksContainer.appendChild(networkElement);
-
-    networkCount++;
-
-    // Add the new network element to the end of the document
-    document.querySelector(".new").before(networkElement);
-});
+// Use DOM properties for untrusted SSIDs and passwords.
+function reindexWiFiNetworks() {
+    document.querySelectorAll(".network").forEach((row, index) => {
+        row.querySelectorAll("[data-wifi-field]").forEach(input => {
+            input.name = input.id = "wifi.AP." + index + "." + input.dataset.wifiField;
+            input.parentElement.querySelector("label").htmlFor = input.id;
+        });
+    });
+}
+function appendWiFiNetwork(network = {}) {
+    const row = document.createElement("div");
+    row.className = "row network border-bottom py-2";
+    const addField = (field, label, type = "text") => {
+        const wrap = document.createElement("div");
+        wrap.className = "col-6 px-1 mb-2";
+        const caption = document.createElement("label");
+        caption.className = "form-label";
+        caption.textContent = label;
+        const input = document.createElement(type === "select" ? "select" : "input");
+        input.className = type === "select" ? "form-select" : "form-control";
+        input.dataset.wifiField = field;
+        if (type === "select") {
+            input.add(new Option("DHCP", "1"));
+            input.add(new Option("Static IPv4", "0"));
+            input.value = network.dhcp === false ? "0" : "1";
+        } else {
+            input.type = type;
+            input.value = network[field] || "";
+        }
+        wrap.append(caption, input);
+        row.append(wrap);
+        return input;
+    };
+    addField("ssid", "SSID");
+    addField("password", "Passphrase", "password");
+    const mode = addField("dhcp", "IP addressing", "select");
+    const ipFields = [
+        addField("ip", "IP address"), addField("gateway", "Default gateway"),
+        addField("subnet", "Subnet mask"), addField("dns1", "Primary DNS"),
+        addField("dns2", "Secondary DNS (optional)")
+    ];
+    const updateMode = () => ipFields.forEach((field, index) => {
+        field.parentElement.hidden = mode.value !== "0";
+        field.required = mode.value === "0" && index < 4;
+    });
+    mode.addEventListener("change", updateMode);
+    updateMode();
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "btn btn-sm btn-outline-danger";
+    remove.textContent = "Delete network";
+    remove.addEventListener("click", () => { row.remove(); reindexWiFiNetworks(); });
+    row.append(remove);
+    document.querySelector(".list-networks").append(row);
+    reindexWiFiNetworks();
+}
+document.querySelector(".new button").addEventListener("click", () => appendWiFiNetwork());
 
 document
     .getElementById("action.symbol")
@@ -592,6 +587,7 @@ function checkConnection() {
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    reindexWiFiNetworks();
     document.getElementById("wifi.APs").value =
         document.querySelectorAll(".network").length;
 

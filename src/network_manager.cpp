@@ -50,6 +50,28 @@ bool NetworkManager::_connectWiFi(const WiFiNetwork& network) {
 
     WiFi.mode(_wifiAPmode ? WIFI_AP_STA : WIFI_STA);
 
+    // Reset address mode on every attempt, including static -> DHCP.
+    const IPAddress none(255, 255, 255, 255);
+    const IPAddress zero(0, 0, 0, 0);
+    if (network.dhcp) {
+        if (!WiFi.config(none, none, none)) {
+            Serial.println("[NM] DHCP configuration failed");
+            return false;
+        }
+    } else {
+        IPAddress ip, gateway, subnet, dns1, dns2;
+        if (!ip.fromString(network.ip) || !gateway.fromString(network.gateway) ||
+            !subnet.fromString(network.subnet) || !dns1.fromString(network.dns1) ||
+            (!network.dns2.isEmpty() && !dns2.fromString(network.dns2)) ||
+            ip == zero || gateway == zero || subnet == zero || dns1 == zero) {
+            Serial.println("[NM] Invalid static IPv4 profile");
+            return false;
+        }
+        if (!WiFi.config(ip, gateway, subnet, dns1, dns2)) {
+            Serial.println("[NM] Static IPv4 configuration failed");
+            return false;
+        }
+    }
     Serial.println("[NM] Attempting to connect to WiFi: " + network.ssid);
     _lastWiFiDisconnectReason = 0;
     WiFi.begin(network.ssid.c_str(), network.psk.c_str());
@@ -203,7 +225,7 @@ void NetworkManager::setAPTimeout(unsigned long timeout) {
     _apTimeout = timeout;
 }
 
-void NetworkManager::addWiFiNetwork(const String& ssid, const String& psk) {
+void NetworkManager::addWiFiNetwork(const String& ssid, const String& psk, bool dhcp, const String& ip, const String& gateway, const String& subnet, const String& dns1, const String& dns2) {
     if (ssid.isEmpty()) {
         return;
     }
@@ -211,7 +233,14 @@ void NetworkManager::addWiFiNetwork(const String& ssid, const String& psk) {
     int index = _findWiFiNetworkIndex(ssid);
     if (index >= 0) {
         Serial.println("[NM] Updating WiFi network: " + ssid);
-        _wifiNetworks[static_cast<size_t>(index)].psk = psk;
+        WiFiNetwork& existing = _wifiNetworks[static_cast<size_t>(index)];
+        existing.psk = psk;
+        existing.dhcp = dhcp;
+        existing.ip = ip;
+        existing.gateway = gateway;
+        existing.subnet = subnet;
+        existing.dns1 = dns1;
+        existing.dns2 = dns2;
         return;
     }
 
@@ -219,6 +248,12 @@ void NetworkManager::addWiFiNetwork(const String& ssid, const String& psk) {
     WiFiNetwork network;
     network.ssid = ssid;
     network.psk = psk;
+    network.dhcp = dhcp;
+    network.ip = ip;
+    network.gateway = gateway;
+    network.subnet = subnet;
+    network.dns1 = dns1;
+    network.dns2 = dns2;
     _wifiNetworks.push_back(network);
 }
 
@@ -351,7 +386,7 @@ bool NetworkManager::isConnected() const {
 
 // Check if WiFi is connected
 bool NetworkManager::isWiFiConnected() const {
-    return _wifiSTAmode ? WiFi.status() == WL_CONNECTED : false;
+    return _wifiSTAmode && WiFi.status() == WL_CONNECTED && WiFi.localIP() != IPAddress(0, 0, 0, 0);
 }
 
 bool NetworkManager::isWifiAPActive() const {

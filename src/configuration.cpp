@@ -48,10 +48,16 @@ bool Configuration::writeFile() {
     }
     try {
 
-        if (wifiAPs[0].ssid != "") { // We don't want to save Auto AP empty SSID
+        if (!wifiAPs.empty() && wifiAPs[0].ssid != "") { // We don't want to save Auto AP empty SSID
             for (int i = 0; i < wifiAPs.size(); i++) {
                 data["wifi"]["AP"][i]["ssid"] = wifiAPs[i].ssid;
                 data["wifi"]["AP"][i]["password"] = wifiAPs[i].password;
+                data["wifi"]["AP"][i]["dhcp"] = wifiAPs[i].dhcp;
+                data["wifi"]["AP"][i]["ip"] = wifiAPs[i].ip;
+                data["wifi"]["AP"][i]["gateway"] = wifiAPs[i].gateway;
+                data["wifi"]["AP"][i]["subnet"] = wifiAPs[i].subnet;
+                data["wifi"]["AP"][i]["dns1"] = wifiAPs[i].dns1;
+                data["wifi"]["AP"][i]["dns2"] = wifiAPs[i].dns2;
             }
         }
 
@@ -234,6 +240,12 @@ bool Configuration::readFile() {
             WiFi_AP wifiap;
             wifiap.ssid                   = WiFiArray[i]["ssid"].as<String>();
             wifiap.password               = WiFiArray[i]["password"].as<String>();
+            wifiap.dhcp = WiFiArray[i]["dhcp"] | true;
+            wifiap.ip = WiFiArray[i]["ip"] | "";
+            wifiap.gateway = WiFiArray[i]["gateway"] | "";
+            wifiap.subnet = WiFiArray[i]["subnet"] | "";
+            wifiap.dns1 = WiFiArray[i]["dns1"] | "";
+            wifiap.dns2 = WiFiArray[i]["dns2"] | "";
 
             wifiAPs.push_back(wifiap);
         }

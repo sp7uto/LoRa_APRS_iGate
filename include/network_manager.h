@@ -32,6 +32,12 @@ private:
     public:
         String ssid;
         String psk;
+        bool dhcp = true;
+        String ip;
+        String gateway;
+        String subnet;
+        String dns1;
+        String dns2;
     };
 
     bool _wifiAPmode = false;
@@ -69,7 +75,7 @@ public:
     bool setupAP(String apName, String apPsk = "");
     bool disableAP();
     void setAPTimeout(unsigned long timeout);
-    void addWiFiNetwork(const String& ssid, const String& psk = "");
+    void addWiFiNetwork(const String& ssid, const String& psk = "", bool dhcp = true, const String& ip = "", const String& gateway = "", const String& subnet = "", const String& dns1 = "", const String& dns2 = "");
     void clearWiFiNetworks();
     bool hasWiFiNetworks() const;
     size_t getWiFiNetworkCount() const;
