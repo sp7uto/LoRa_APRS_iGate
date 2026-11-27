@@ -1,0 +1,13 @@
+const assert=require("node:assert/strict");
+const fs=require("node:fs"),vm=require("node:vm");
+const html=fs.readFileSync("tools/config-generator/index.html","utf8");
+const ctx={module:{exports:{}},TextEncoder};vm.runInNewContext(html.match(/<script id="logic">([\s\S]*?)<\/script>/)[1],ctx);
+const {buildConfig,staticOK}=ctx.module.exports;
+const net={ssid:"Home",password:"example-wifi",dhcp:true,ip:"",gateway:"",subnet:"",dns1:"",dns2:""};
+const v={callsign:"SP0ABC-10",lat:"51.5",lon:"18.7",passcode:"12345",server:"rotate.aprs2.net",port:"14580",radius:"50",interval:"15",networks:[net],apPassword:"example-AP-123",adminPassword:"example-WEB-123",otaPassword:"example-OTA-123",freq:"433775000",sf:"12",cr:"5",bw:"125000",confirmRadio:true,comment:"Test",tz:"0",failover:true};
+let c=buildConfig(v);assert.equal(c.lora.txActive,false);assert.equal(c.digi.mode,0);assert.equal(c.aprs_is.messagesToRF,false);assert.equal(c.beacon.sendViaRF,false);assert.equal(c.beacon.symbol,"&");assert.equal(c.wifi.aprsFailover,false);assert.equal(c.webadmin.active,true);
+const staticNet={...net,ssid:"Remote",dhcp:false,ip:"192.168.2.50",gateway:"192.168.2.1",subnet:"255.255.255.0",dns1:"9.9.9.9"};
+assert(staticOK(staticNet));assert(!staticOK({...staticNet,subnet:"255.0.255.0"}));assert(!staticOK({...staticNet,gateway:"192.168.3.1"}));
+c=buildConfig({...v,networks:[net,staticNet]});assert.equal(c.wifi.aprsFailover,true);assert.equal(c.wifi.AP[1].ip,"192.168.2.50");
+for(const patch of [{callsign:"NOCALL-10"},{lat:""},{passcode:""},{confirmRadio:false},{networks:[net,net]},{networks:[{...net,ssid:"Bad "}]},{networks:[{...net,password:""}]},{networks:[{...staticNet,ip:"192.168.2.255"}]},{adminPassword:v.apPassword}])assert.throws(()=>buildConfig({...v,...patch}));
+console.log("Configuration generator tests passed");

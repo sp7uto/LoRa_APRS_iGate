@@ -47,3 +47,7 @@ Opt-in APRS-IS session health failover, 3 min unhealthy window, 5 min cooldown, 
 [DHCP screenshot](https://raw.githubusercontent.com/wiki/sp7uto/LoRa_APRS_iGate/images/sp7uto/ap-dhcp.png) · [Static IPv4 screenshot](https://raw.githubusercontent.com/wiki/sp7uto/LoRa_APRS_iGate/images/sp7uto/ap-static-ipv4.png) · [Priority and failover](https://raw.githubusercontent.com/wiki/sp7uto/LoRa_APRS_iGate/images/sp7uto/ap-priority-failover.png)
 
 Generated from source during Wiki publishing; example values only. / Generowane z kodu podczas publikacji Wiki; wyłącznie dane przykładowe.
+
+## Configuration generator / Generator konfiguracji
+
+[Standalone HTML](../../tools/config-generator/index.html) · [Wiki PL/EN](https://github.com/sp7uto/LoRa_APRS_iGate/wiki/Configuration-Generator). Download raw HTML and open offline. / Pobierz HTML i otwórz lokalnie. RX-only, new configuration, no server or telemetry.

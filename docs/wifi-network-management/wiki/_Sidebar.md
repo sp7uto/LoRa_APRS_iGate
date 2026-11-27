@@ -4,6 +4,7 @@
 - 🧩 [Sprzęt / Hardware](Hardware)
 - 💾 [Instalacja / Installation](Installation)
 - ⚙️ [Konfiguracja / Configuration](Configuration)
+- 🧰 [Generator konfiguracji / Generator](Configuration-Generator)
 - 🌐 [Network Failover](Network-Failover)
 - 📶 [APRS-IS](APRS-IS)
 - 🗄️ [Backup & Restore](Backup-and-Restore)

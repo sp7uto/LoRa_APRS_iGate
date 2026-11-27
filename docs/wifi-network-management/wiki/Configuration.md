@@ -38,3 +38,7 @@ PL: IP address, Default gateway, Subnet mask i Primary DNS są wymagane; Seconda
 ![Two AP profiles and Auto AP failover](images/sp7uto/ap-priority-failover.png)
 
 PL: Move up i Move down ustalają kolejność; opcjonalny failover APRS-IS i Auto AP są osobnymi funkcjami. / EN: Move up and Move down set priority; optional APRS-IS failover and Auto AP are separate functions.
+
+## Generator konfiguracji / Configuration Generator
+
+[Offline RX-only configuration generator](Configuration-Generator) — creates a complete JSON for Restore; no device access. / Tworzy kompletny JSON, bez łączenia z urządzeniem.

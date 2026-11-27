@@ -18,3 +18,7 @@ Items marked complete indicate implementation or documentation only, not hardwar
 - [x] Factory and OTA packaging workflow definition / Definicja pakowania obrazów
 - [x] Full flash backup and rollback procedure / Instrukcja kopii i odzyskiwania
 - [ ] Verify factory artifact and physical recovery / Weryfikacja obrazu i odzyskiwania
+
+- [x] Standalone RX-only configuration generator source / Generator offline
+- [ ] Live device import verification / Test importu na urządzeniu
+- [ ] GitHub Pages deployment / Publikacja Pages

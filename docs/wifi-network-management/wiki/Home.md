@@ -24,6 +24,7 @@ Per-network IPv4 addressing and Wi-Fi management for unattended APRS gateways. T
 - [Hardware](Hardware)
 - [Installation](Installation)
 - [Configuration](Configuration)
+- [Configuration Generator](Configuration-Generator)
 - [Network failover](Network-Failover)
 - [APRS-IS](APRS-IS)
 - [Backup and restore](Backup-and-Restore)

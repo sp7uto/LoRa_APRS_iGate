@@ -6,6 +6,8 @@ on:
       - 'docs/wifi-network-management/wiki/**'
       - '.github/workflows/publish-wiki.yml'
       - 'tools/render_wifi_docs.py'
+      - 'tools/config-generator/**'
+      - 'tests/config_generator.test.cjs'
       - 'tools/add_cover_to_docs.py'
       - 'data_embed/index.html'
       - 'data_embed/script.js'
@@ -39,12 +41,20 @@ jobs:
             git commit -m "docs: place approved iGate cover in README and Wiki"
             git push "https://x-access-token:${REPOSITORY_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/feature/wifi-network-management
           fi
+      - name: Test configuration generator
+        run: node tests/config_generator.test.cjs
+      - name: Upload offline configuration generator
+        uses: actions/upload-artifact@v4
+        with:
+          name: igate-config-generator
+          path: tools/config-generator/index.html
+          if-no-files-found: error
       - name: Validate bilingual source pages
         shell: bash
         run: |
           set -euo pipefail
           src=docs/wifi-network-management/wiki
-          for page in Home Configuration Hardware Installation Network-Failover APRS-IS Backup-and-Restore Testing Troubleshooting Changelog Roadmap _Sidebar _Footer; do
+          for page in Home Configuration Configuration-Generator Hardware Installation Network-Failover APRS-IS Backup-and-Restore Testing Troubleshooting Changelog Roadmap _Sidebar _Footer; do
             test -s "$src/$page.md"
           done
       - uses: actions/setup-python@v5
@@ -78,7 +88,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # These thirteen pages were already adopted manually as this project's
           # versioned Wiki. Preserve existing Git history and all unrelated pages.
-          for page in Home Configuration Hardware Installation Network-Failover APRS-IS Backup-and-Restore Testing Troubleshooting Changelog Roadmap _Sidebar _Footer; do
+          for page in Home Configuration Configuration-Generator Hardware Installation Network-Failover APRS-IS Backup-and-Restore Testing Troubleshooting Changelog Roadmap _Sidebar _Footer; do
             cp "$GITHUB_WORKSPACE/docs/wifi-network-management/wiki/$page.md" "$page.md"
             git add -- "$page.md"
           done
