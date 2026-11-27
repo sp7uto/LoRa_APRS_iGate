@@ -47,6 +47,44 @@ with sync_playwright() as p, TemporaryDirectory() as tmp:
     assert c["wifi"]["AP"][1]["ip"] == "192.168.2.50"
     assert c["webadmin"]["active"] is True
     assert len({c["webadmin"]["password"], c["ota"]["password"], c["wifi"]["autoAP"]["password"]}) == 3
+    # Existing backup: unchanged export, then explicit migration and profile change.
+    legacy = json.loads(target.read_text())
+    legacy["unknownFutureSection"] = {"flag": True}
+    legacy["mqtt"]["password"] = "keep-this-secret"
+    legacy["wifi"]["AP"][0].pop("dhcp")
+    legacy["wifi"].pop("aprsFailover")
+    src = Path(tmp) / "legacy.json"
+    src.write_text(json.dumps(legacy))
+    page.locator("#importFile").set_input_files(str(src))
+    page.locator("#editPanel").wait_for(state="visible")
+    page.locator("#reviewEdit").click()
+    assert page.locator("#downloadEdit").is_enabled(), page.locator("#editResult").inner_text()
+    with page.expect_download() as d:
+        page.locator("#downloadEdit").click()
+    result = Path(tmp) / "unchanged.json"
+    d.value.save_as(result)
+    assert json.loads(result.read_text()) == legacy
+    page.locator("#upgradeWifi").click()
+    page.locator('[data-path="wifi.AP.0.dhcp"]').select_option("true")
+    page.locator('[data-path="beacon.comment"]').fill("Modified beacon")
+    page.locator("#editProfile").select_option("wide1")
+    page.locator("#applyProfile").click()
+    page.locator("#reviewEdit").click()
+    assert not page.locator("#downloadEdit").is_enabled()
+    page.locator("#editConfirmRF").check()
+    page.locator("#reviewEdit").click()
+    assert page.locator("#downloadEdit").is_enabled(), page.locator("#editResult").inner_text()
+    with page.expect_download() as d:
+        page.locator("#downloadEdit").click()
+    result = Path(tmp) / "modified.json"
+    d.value.save_as(result)
+    mod = json.loads(result.read_text())
+    assert mod["unknownFutureSection"] == legacy["unknownFutureSection"]
+    assert mod["mqtt"]["password"] == legacy["mqtt"]["password"]
+    assert mod["wifi"]["AP"][0]["password"] == legacy["wifi"]["AP"][0]["password"]
+    assert mod["beacon"]["comment"] == "Modified beacon"
+    assert mod["digi"]["mode"] == 1 and mod["lora"]["txActive"] is True
+    assert "keep-this-secret" not in page.locator("#editDiff").inner_text()
     assert not errors, errors
     assert not external, external
     browser.close()

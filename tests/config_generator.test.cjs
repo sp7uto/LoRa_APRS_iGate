@@ -11,3 +11,14 @@ assert(staticOK(staticNet));assert(!staticOK({...staticNet,subnet:"255.0.255.0"}
 c=buildConfig({...v,networks:[net,staticNet]});assert.equal(c.wifi.aprsFailover,true);assert.equal(c.wifi.AP[1].ip,"192.168.2.50");
 for(const patch of [{callsign:"NOCALL-10"},{lat:""},{passcode:""},{confirmRadio:false},{networks:[net,net]},{networks:[{...net,ssid:"Bad "}]},{networks:[{...net,password:""}]},{networks:[{...staticNet,ip:"192.168.2.255"}]},{adminPassword:v.apPassword}])assert.throws(()=>buildConfig({...v,...patch}));
 console.log("Configuration generator tests passed");
+
+const {parseBackup,diffConfig,upgradeWiFi,applyProfile,validateEdited,safeDiffValue}=ctx.module.exports;
+const legacy=JSON.parse(JSON.stringify(c));delete legacy.wifi.AP[0].dhcp;delete legacy.wifi.aprsFailover;legacy.mqtt.password="preserve-mqtt-secret";legacy.unknown={future:true};legacy.lora.txActive=false;
+const imported=parseBackup(JSON.stringify(legacy));const edited=JSON.parse(JSON.stringify(imported));
+assert.equal(diffConfig(imported,edited).length,0);
+upgradeWiFi(edited);assert.equal(edited.wifi.AP[0].dhcp,true);assert.equal(edited.wifi.aprsFailover,false);
+assert.equal(edited.mqtt.password,legacy.mqtt.password);assert.deepEqual(edited.unknown,legacy.unknown);
+assert(!safeDiffValue("secret","wifi.AP.0.password").includes("secret"));
+applyProfile(edited,"wide1");assert.equal(edited.digi.mode,1);assert.equal(edited.lora.txActive,true);assert.throws(()=>validateEdited(imported,edited,false));assert(validateEdited(imported,edited,true).length>0);
+assert.throws(()=>parseBackup('{"__proto__":{}}'));assert.throws(()=>parseBackup('{"callsign":"SP0ABC"}'));
+console.log("Import preservation and profile tests passed");

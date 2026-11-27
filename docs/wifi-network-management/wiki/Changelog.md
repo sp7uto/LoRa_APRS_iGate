@@ -10,3 +10,5 @@ No stable release has been published / Nie opublikowano wersji stabilnej.
 
 - [e5bc430](https://github.com/sp7uto/LoRa_APRS_iGate/commit/e5bc4305c750dd9268014a97274b29634793117b): opt-in APRS-IS failover, 3 minute grace, 5 minute cooldown, bounded reconnect attempts / opcjonalny failover i ograniczenie prób.
 - Experimental packaging and full flash recovery documentation / Pakiet eksperymentalny i procedura kopii całego flash.
+
+- Offline generator: import existing iGate JSON, preserve untouched keys, add missing Wi-Fi fields, edit known values, optional station profiles, masked diff and separate export. / Import i edycja JSON bez nadpisywania pozostałych pól.

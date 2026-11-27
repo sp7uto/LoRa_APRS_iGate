@@ -4,9 +4,14 @@
 </style></head><body><header>SP7UTO · LoRa APRS iGate · CA2RXU upstream</header><main>
 <h1 data-pl="Generator konfiguracji iGate" data-en="iGate Configuration Generator">Generator konfiguracji iGate</h1>
 <button type="button" id="language">English</button>
-<p data-pl="Tryb RX-only · Heltec V3/V3.1 · JSON offline" data-en="RX-only mode · Heltec V3/V3.1 · Offline JSON">Tryb RX-only · Heltec V3/V3.1 · JSON offline</p>
-<p class="notice" data-pl="Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce." data-en="New configuration, not an existing backup editor. TX and digipeater always disabled. Nothing is sent to a server or saved in the browser.">Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce.</p>
-<form id="form" autocomplete="off">
+<p data-pl="Heltec V3/V3.1 · JSON offline" data-en="Heltec V3/V3.1 · Offline JSON">Tryb RX-only · Heltec V3/V3.1 · JSON offline</p>
+<p id="newNotice" class="notice" data-pl="Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce." data-en="New configuration, not an existing backup editor. TX and digipeater always disabled. Nothing is sent to a server or saved in the browser.">Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce.</p>
+<section><h2 data-pl="Wybierz sposób pracy" data-en="Choose workflow">Wybierz sposób pracy</h2><div class="buttons"><button type="button" id="newMode" data-pl="Nowa konfiguracja" data-en="New configuration">Nowa konfiguracja</button><button type="button" id="importMode" class="primary" data-pl="Wczytaj istniejący JSON" data-en="Import existing JSON">Wczytaj istniejący JSON</button></div><input id="importFile" type="file" accept=".json,application/json" hidden><output id="importStatus" role="status"></output></section>
+<div id="editPanel" hidden>
+<section><h2 data-pl="Edycja istniejącej konfiguracji" data-en="Edit existing configuration">Edycja istniejącej konfiguracji</h2><p class="notice" data-pl="Oryginalny plik pozostaje nietknięty. Wszystkie nieedytowane wartości, również nieznane pola, pozostają bez zmian. Eksport nie zapisuje niczego w urządzeniu." data-en="Original file stays untouched. Unedited values, including unknown keys, remain unchanged. Export does not write to the device.">Oryginalny plik pozostaje nietknięty. Wszystkie nieedytowane wartości, również nieznane pola, pozostają bez zmian. Eksport nie zapisuje niczego w urządzeniu.</p><p id="editName"></p><div class="buttons"><button type="button" id="upgradeWifi" data-pl="Uzupełnij brakujące pola Wi-Fi" data-en="Add missing Wi-Fi fields">Uzupełnij brakujące pola Wi-Fi</button><button type="button" id="resetEdit" data-pl="Cofnij wszystkie zmiany" data-en="Reset all changes">Cofnij wszystkie zmiany</button></div>
+<label style="margin-top:16px"><span data-pl="Opcjonalna zmiana roli stacji" data-en="Optional station role change">Opcjonalna zmiana roli stacji</span><select id="editProfile"><option value="">— Bez zmian / No change —</option><option value="rx">RX-only iGate</option><option value="tx">RX/TX iGate (IS→RF off)</option><option value="wide1">iGate + WIDE1</option><option value="wide2">iGate + WIDE2</option><option value="digi">Standalone WIDE1 Digi</option><option value="backup">iGate + Backup Digi</option></select></label><button type="button" id="applyProfile" style="margin-top:8px" data-pl="Zastosuj profil" data-en="Apply profile">Zastosuj profil</button><small style="display:block" data-pl="Profil zmienia tryb, symbol i powiązane opcje; nie dobiera automatycznie TX frequency ani mocy. Sprawdź parametry RF." data-en="Profile changes mode, symbol and related settings; TX frequency and power are not auto-selected. Review RF settings.">Profil zmienia tryb, symbol i powiązane opcje; nie dobiera automatycznie TX frequency ani mocy. Sprawdź parametry RF.</small></section>
+<div id="editFields"></div>
+<section><h2 data-pl="Podsumowanie zmian" data-en="Review changes">Podsumowanie zmian</h2><label class="check"><input type="checkbox" id="editConfirmRF"><span data-pl="Potwierdzam ustawienia RF, właściwą antenę i uprawnienia do nadawania (jeśli TX aktywny)." data-en="I confirm RF settings, antenna and authorization to transmit (if TX enabled).">Potwierdzam ustawienia RF, właściwą antenę i uprawnienia do nadawania (jeśli TX aktywny).</span></label><pre id="editDiff"></pre><output id="editResult" role="status"></output><div class="buttons"><button type="button" id="reviewEdit" class="primary" data-pl="Sprawdź zmiany" data-en="Validate changes">Sprawdź zmiany</button><button type="button" id="downloadEdit" disabled data-pl="Pobierz zmodyfikowany JSON" data-en="Download modified JSON">Pobierz zmodyfikowany JSON</button></div><p class="muted" data-pl="Hasła w JSON są jawne — zachowaj plik prywatnie. Przywróć w urządzeniu dopiero po wykonaniu kopii i sprawdzeniu ustawień." data-en="Passwords are plaintext in JSON — keep the file private. Restore on the device only after backup and review.">Hasła w JSON są jawne — zachowaj plik prywatnie. Przywróć w urządzeniu dopiero po wykonaniu kopii i sprawdzeniu ustawień.</p></section></div><form id="form" autocomplete="off">
 <section><h2 data-pl="1. Stacja" data-en="1. Station">1. Stacja</h2><div class="grid">
 <label><span data-pl="Znak (z -10)" data-en="Callsign (with -10)">Znak (z -10)</span><input id="callsign" placeholder="SP0ABC-10" required></label>
 <label><span data-pl="Twój APRS-IS passcode" data-en="Your APRS-IS passcode">Twój APRS-IS passcode</span><input id="passcode" type="password" inputmode="numeric" required></label>
@@ -61,7 +66,68 @@ function buildConfig(v){
   c.ntp.gmtCorrection=+v.tz;requireValue(Number.isFinite(c.ntp.gmtCorrection)&&Math.abs(c.ntp.gmtCorrection)<=14,"GMT offset invalid.");
   return c;
 }
-if(typeof module!=="undefined")module.exports={buildConfig,ipv4,staticOK};
+
+const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+const record=o=>o!==null&&typeof o==="object"&&!Array.isArray(o);
+const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const AP_DEFAULT={ssid:"",password:"",dhcp:true,ip:"",gateway:"",subnet:"255.255.255.0",dns1:"",dns2:""};
+function parseBackup(raw){
+ requireValue(raw.length<=1048576,"Maximum JSON size: 1 MiB");
+ const c=JSON.parse(raw.replace(/^\uFEFF/,""));
+ function check(o,depth=0){requireValue(depth<=25,"JSON too deeply nested");if(o&&typeof o==="object")for(const k of Object.keys(o)){requireValue(!["__proto__","constructor","prototype"].includes(k),"Unsupported JSON key");check(o[k],depth+1)}}
+ check(c);
+ requireValue(record(c)&&typeof c.callsign==="string"&&record(c.wifi)&&Array.isArray(c.wifi.AP)&&c.wifi.AP.every(record)&&record(c.lora)&&record(c.beacon)&&record(c.aprs_is)&&record(c.digi),"Not an iGate configuration backup / To nie jest kopia konfiguracji iGate.");
+ requireValue(!own(c,"network"),"Ethernet/RP2350 backup not supported by this ESP32 editor.");
+ return c;
+}
+function getPath(o,p){for(const k of p){if(!o||!own(o,k))return undefined;o=o[k]}return o}
+function putPath(o,p,v){for(const k of p.slice(0,-1)){if(!own(o,k))o[k]={};requireValue(record(o[k])||Array.isArray(o[k]),"Invalid section: "+k);o=o[k]}o[p.at(-1)]=v}
+function diffConfig(a,b,p=[]){if(same(a,b))return [];if(record(a)&&record(b)){return [...new Set([...Object.keys(a),...Object.keys(b)])].flatMap(k=>diffConfig(a[k],b[k],[...p,k]))}if(Array.isArray(a)&&Array.isArray(b)){return Array.from({length:Math.max(a.length,b.length)},(_,i)=>diffConfig(a[i],b[i],[...p,i])).flat()}return [{path:p.join("."),before:a,after:b}]}
+function secretPath(p){return /password|passcode|secret|token|key|credential/i.test(p)}
+function safeDiffValue(v,p){if(v===undefined)return "—";if(secretPath(p)||typeof v==="object"&&v!==null)return "•••• / structured value";return JSON.stringify(v)}
+function upgradeWiFi(c){for(const n of c.wifi.AP)for(const k of ["dhcp","ip","gateway","subnet","dns1","dns2"])if(!own(n,k))n[k]=k==="dhcp"?true:"";if(!own(c.wifi,"aprsFailover"))c.wifi.aprsFailover=false}
+function applyProfile(c,mode){
+ requireValue(["rx","tx","wide1","wide2","digi","backup"].includes(mode),"Unknown profile");
+ const digiOnly=mode==="digi",tx=mode!=="rx";
+ Object.assign(c.lora,{rxActive:true,txActive:tx});
+ Object.assign(c.digi,{mode:mode==="wide1"||digiOnly?1:mode==="wide2"?2:0,ecoMode:0,backupDigiMode:mode==="backup"});
+ Object.assign(c.aprs_is,{active:!digiOnly,messagesToRF:false,objectsToRF:false});
+ Object.assign(c.beacon,{overlay:"L",symbol:digiOnly||mode==="wide1"||mode==="wide2"?"#":mode==="tx"?"a":"&",sendViaAPRSIS:!digiOnly,sendViaRF:false});
+ if(mode==="backup"||digiOnly)c.wifi.aprsFailover=false;
+}
+function validateEdited(original,c,confirmRF){
+ const d=diffConfig(original,c);
+ const touched=p=>d.some(x=>x.path===p||x.path.startsWith(p+".")||p.startsWith(x.path+"."));
+ const apChanged=touched("wifi.AP");
+ if(apChanged){
+  const ssids=new Set();
+  for(const n of c.wifi.AP){
+   requireValue(typeof n.ssid==="string"&&n.ssid!==""&&n.ssid.trim()===n.ssid&&new TextEncoder().encode(n.ssid).length<=32&&!/[\x00-\x1f\x7f]/.test(n.ssid),"Invalid SSID / Nieprawidłowe SSID");
+   requireValue(!ssids.has(n.ssid),"Duplicate SSID / Powtórzone SSID");ssids.add(n.ssid);
+   requireValue(typeof n.password==="string"&&(n.password===""||/^[\x20-\x7e]{8,63}$/.test(n.password)||/^[a-fA-F0-9]{64}$/.test(n.password)),"Invalid Wi-Fi password");
+   requireValue(n.dhcp!==false||staticOK({...AP_DEFAULT,...n}),"Invalid static IPv4: "+n.ssid);
+  }
+ }
+ if(touched("wifi.aprsFailover")||apChanged||touched("digi")||touched("aprs_is.active")){
+  if(c.wifi.aprsFailover)requireValue(c.wifi.AP.length>=2&&c.aprs_is.active===true&&c.digi.ecoMode===0&&!c.digi.backupDigiMode,"Failover requires 2 APs, APRS-IS, normal mode and no backup digi.");
+ }
+ if(touched("callsign"))requireValue(/^[A-Z0-9]{3,6}(-([0-9]|1[0-5]))?$/.test(c.callsign)&&/[A-Z]/.test(c.callsign)&&/[0-9]/.test(c.callsign)&&!/^N[O0]CALL/.test(c.callsign),"Invalid callsign");
+ if(touched("beacon.latitude")||touched("beacon.longitude"))requireValue(typeof c.beacon.latitude==="number"&&typeof c.beacon.longitude==="number"&&Math.abs(c.beacon.latitude)<=90&&Math.abs(c.beacon.longitude)<=180,"Invalid coordinates");
+ if(touched("aprs_is")&&c.aprs_is.active)requireValue(/^\d{1,5}$/.test(String(c.aprs_is.passcode))&&+c.aprs_is.passcode<=32767&&typeof c.aprs_is.server==="string"&&/^[A-Za-z0-9.-]+$/.test(c.aprs_is.server)&&Number.isInteger(c.aprs_is.port)&&c.aprs_is.port>=1&&c.aprs_is.port<=65535,"Invalid APRS-IS settings");
+ for(const k of ["rx","tx"])if(touched("lora."+k+"Freq")||touched("lora."+k+"SpreadingFactor")||touched("lora."+k+"CodingRate4")||touched("lora."+k+"SignalBandwidth")||(k==="tx"&&touched("lora.txActive")&&c.lora.txActive)){
+  let f=c.lora[k+"Freq"];requireValue(Number.isInteger(f)&&((f>=430000000&&f<=440000000)||(f>=863000000&&f<=870000000)||(f>=902000000&&f<=928000000))&&[5,6,7,8,9,10,11,12].includes(c.lora[k+"SpreadingFactor"])&&[5,6,7,8].includes(c.lora[k+"CodingRate4"])&&[62500,125000,250000,500000].includes(c.lora[k+"SignalBandwidth"]),"Invalid "+k.toUpperCase()+" radio profile");
+ }
+ if(touched("digi")||touched("lora.txActive")||touched("aprs_is")||touched("beacon.sendViaRF")){
+  requireValue([0,1,2,3].includes(c.digi.mode)&&[0,1,2].includes(c.digi.ecoMode),"Invalid digipeater mode");
+  requireValue(!(c.digi.ecoMode===1&&c.aprs_is.active),"Ultra Eco and APRS-IS conflict");
+  requireValue(!(c.digi.mode>0||c.digi.backupDigiMode||c.beacon.sendViaRF||c.aprs_is.messagesToRF||c.aprs_is.objectsToRF)||c.lora.txActive===true,"RF functions require TX enabled");
+ }
+ if(c.lora.txActive===true&&(touched("lora")||touched("digi")||touched("aprs_is")||touched("beacon")||touched("callsign")))requireValue(confirmRF===true,"Confirm RF settings, authorization and antenna / Potwierdź parametry RF, pozwolenie i antenę.");
+ for(const [p,active] of [["wifi.autoAP.password",c.wifi.autoAP?.enabled],["webadmin.password",c.webadmin?.active]])if(touched(p)&&active)requireValue(goodPassword(getPath(c,p.split("."))),"New access password: 12–63 ASCII characters");
+ return d;
+}
+
+if(typeof module!=="undefined")module.exports={buildConfig,ipv4,staticOK,parseBackup,diffConfig,upgradeWiFi,applyProfile,validateEdited,safeDiffValue};
 </script><script>
 const $=id=>document.getElementById(id);let lang="pl",generated=null;
 function translate(){document.documentElement.lang=lang;document.querySelectorAll("[data-"+lang+"]").forEach(e=>e.textContent=e.dataset[lang]);$("language").textContent=lang==="pl"?"English":"Polski"}
@@ -78,4 +144,62 @@ $("preset").onchange=()=>{const p=$("preset").value;let vals=p==="standard"?[433
 $("form").addEventListener("input",invalidate);
 $("form").onsubmit=e=>{e.preventDefault();invalidate();try{const v={};["callsign","passcode","lat","lon","freq","sf","cr","bw","server","port","radius","interval","tz","comment","apPassword","adminPassword","otaPassword"].forEach(id=>v[id]=$(id).value);v.failover=$("failover").checked;v.confirmRadio=$("confirmRadio").checked;v.networks=[...$("networks").children].map(r=>Object.fromEntries([...r.querySelectorAll("[data-field]")].map(e=>[e.dataset.field,e.dataset.field==="dhcp"?e.value==="1":e.type==="checkbox"?e.checked:e.value])));generated=buildConfig(v);const c=generated;$("review").textContent=c.callsign+" | RX-only | "+c.lora.rxFreq+" Hz | SF"+c.lora.rxSpreadingFactor+" | CR4/"+c.lora.rxCodingRate4+" | BW "+c.lora.rxSignalBandwidth+" Hz\nAPRS-IS: "+c.aprs_is.server+":"+c.aprs_is.port+" | "+c.aprs_is.filter+"\n"+c.wifi.AP.map((n,i)=>(i+1)+". "+n.ssid+" — "+(n.dhcp?"DHCP":n.ip)).join("\n")+"\nAuto AP: ON | Failover: "+(c.wifi.aprsFailover?"ON":"OFF")+" | TX: OFF | DIGI: OFF";$("review").hidden=false;$("result").textContent=lang==="pl"?"Konfiguracja poprawna składniowo. Sprawdź podsumowanie.":"Configuration validated. Review the summary.";$("download").disabled=false}catch(err){$("result").textContent=err.message}};
 $("download").onclick=()=>{if(!generated)return;const url=URL.createObjectURL(new Blob([JSON.stringify(generated,null,2)+"\n"],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="iGateConfigurationBackup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+
+let original=null,edited=null,editReady=false;
+function dirtyEdit(){editReady=false;$("downloadEdit").disabled=true;$("editResult").textContent="";$("editConfirmRF").checked=false;showChanges()}
+function showChanges(){if(!original)return;const d=diffConfig(original,edited);$("editDiff").textContent=d.length?d.map(x=>x.path+": "+safeDiffValue(x.before,x.path)+" → "+safeDiffValue(x.after,x.path)).join("\n"):"Bez zmian / No changes";}
+function create(tag,txt){const e=document.createElement(tag);if(txt!==undefined)e.textContent=txt;return e}
+const enums={"digi.mode":[[0,"OFF"],[1,"WIDE1 fill-in"],[2,"WIDE2 + WIDE1"],[3,"Own callsign path"]],"digi.ecoMode":[[0,"Normal"],[1,"Ultra Eco"],[2,"Normal, Wi-Fi off"]],"lora.rxSpreadingFactor":[5,6,7,8,9,10,11,12],"lora.txSpreadingFactor":[5,6,7,8,9,10,11,12],"lora.rxCodingRate4":[5,6,7,8],"lora.txCodingRate4":[5,6,7,8],"lora.rxSignalBandwidth":[62500,125000,250000,500000],"lora.txSignalBandwidth":[62500,125000,250000,500000]};
+function field(p,sample,parent){
+ const value=getPath(edited,p),exists=value!==undefined;
+ if(exists&&(value===null||typeof value==="object")){const n=create("small",p.at(-1)+" — structured / preserved");parent.append(n);return}
+ const type=typeof (exists?value:sample);
+ if(!["string","boolean","number"].includes(type))return;
+ const label=create("label",p.at(-1)+(exists?"":" (missing / brak)")),input=create(enums[p.join(".")]||type==="boolean"?"select":"input");
+ input.dataset.path=p.join(".");
+ if(input.tagName==="SELECT"){
+  const opts=type==="boolean"?[[true,"ON / Tak"],[false,"OFF / Nie"]]:enums[p.join(".")].map(v=>Array.isArray(v)?v:[v,String(v)]);
+  if(!exists)input.add(new Option("— Not set / Brak —",""));
+  if(exists&&!opts.some(v=>v[0]===value))input.add(new Option(String(value),String(value)));
+  opts.forEach(([v,l])=>input.add(new Option(l,String(v))));input.value=exists?String(value):"";
+ }else{
+  input.type=type==="number"?"number":secretPath(p.join("."))?"password":"text";
+  if(type==="number")input.step="any";
+  input.value=exists?String(value):"";if(!exists)input.placeholder=secretPath(p.join("."))?"":String(sample);
+ }
+ const commit=()=>{if(input.value===""&&(type!=="string"||!exists))return;
+  const next=type==="boolean"?input.value==="true":type==="number"?Number(input.value):input.value;
+  if(type==="number"&&!Number.isFinite(next))return;
+  putPath(edited,p,next);dirtyEdit();
+ };
+ input.addEventListener("input",commit);input.addEventListener("change",commit);
+ label.append(input);parent.append(label);
+}
+function renderEditor(){
+ const target=$("editFields");target.replaceChildren();
+ const general=create("section"),g=create("div");g.className="grid";general.append(create("h2","General / Ogólne"),g);
+ for(const k of ["callsign","tacticalCallsign","personalNote","blacklist"])field([k],DEFAULTS[k],g);target.append(general);
+ const wifi=create("section");wifi.append(create("h2","Wi-Fi / Access Points"));
+ edited.wifi.AP.forEach((n,i)=>{const row=create("div");row.className="network";row.append(create("strong","AP "+(i+1)));const grid=create("div");grid.className="grid";
+ for(const [k,v] of Object.entries(AP_DEFAULT))field(["wifi","AP",i,k],v,grid);
+ row.append(grid);const buttons=create("div");buttons.className="buttons";
+ for(const [txt,delta] of [["↑ Move up",-1],["↓ Move down",1],["Delete / Usuń",0]]){const b=create("button",txt);b.type="button";b.disabled=delta!==0&&(i+delta<0||i+delta>=edited.wifi.AP.length);b.onclick=()=>{if(delta===0)edited.wifi.AP.splice(i,1);else [edited.wifi.AP[i],edited.wifi.AP[i+delta]]=[edited.wifi.AP[i+delta],edited.wifi.AP[i]];renderEditor();dirtyEdit()};buttons.append(b)}row.append(buttons);wifi.append(row)});
+ const add=create("button","+ AP");add.type="button";add.onclick=()=>{edited.wifi.AP.push(copy(AP_DEFAULT));renderEditor();dirtyEdit()};wifi.append(add);
+ const wg=create("div");wg.className="grid";field(["wifi","aprsFailover"],false,wg);for(const [k,v] of Object.entries(DEFAULTS.wifi.autoAP))field(["wifi","autoAP",k],v,wg);wifi.append(wg);target.append(wifi);
+ const sections=["aprs_is","beacon","lora","digi","ntp","display","webadmin","ota","other","battery","mqtt","syslog","tnc","wxsensor","remoteManagement"];
+ for(const key of sections){if(own(edited,key)&&!record(edited[key]))continue;
+ const detail=create("details");detail.open=["aprs_is","beacon","lora","digi"].includes(key);detail.append(create("summary",key));const grid=create("div");grid.className="grid";grid.style.marginTop="12px";
+ for(const [k,v] of Object.entries(DEFAULTS[key]))field([key,k],v,grid);
+ detail.append(grid);target.append(detail)}
+ showChanges();
+}
+$("importMode").onclick=()=>$("importFile").click();
+$("newMode").onclick=()=>{if(original&&diffConfig(original,edited).length&&!confirm("Discard imported edits? / Porzucić zmiany?"))return;original=edited=null;$("editPanel").hidden=true;$("form").hidden=false;$("newNotice").hidden=false;$("importStatus").textContent="";$("importFile").value=""};
+$("importFile").onchange=async()=>{const file=$("importFile").files[0];if(!file)return;try{if(original&&diffConfig(original,edited).length&&!confirm("Replace edited configuration? / Zastąpić edytowaną konfigurację?"))return;requireValue(file.size<=1048576,"Maximum JSON size: 1 MiB");const c=parseBackup(await file.text());original=c;edited=copy(c);$("editPanel").hidden=false;$("form").hidden=true;$("newNotice").hidden=true;$("editName").textContent=file.name+" · "+c.callsign;$("editProfile").value="";renderEditor();dirtyEdit();$("importStatus").textContent="Imported locally / Wczytano lokalnie"}catch(e){$("importStatus").textContent=e.message}finally{$("importFile").value=""}};
+$("upgradeWifi").onclick=()=>{upgradeWiFi(edited);renderEditor();dirtyEdit()};
+$("resetEdit").onclick=()=>{edited=copy(original);$("editProfile").value="";renderEditor();dirtyEdit()};
+$("applyProfile").onclick=()=>{if(!$("editProfile").value)return;applyProfile(edited,$("editProfile").value);renderEditor();dirtyEdit()};
+$("editConfirmRF").onchange=()=>{editReady=false;$("downloadEdit").disabled=true};
+$("reviewEdit").onclick=()=>{try{validateEdited(original,edited,$("editConfirmRF").checked);editReady=true;$("downloadEdit").disabled=false;$("editResult").textContent="Validated / Sprawdzono. Review all differences before restore."}catch(e){editReady=false;$("downloadEdit").disabled=true;$("editResult").textContent=e.message}};
+$("downloadEdit").onclick=()=>{if(!editReady)return;const url=URL.createObjectURL(new Blob([JSON.stringify(edited,null,2)+"\n"],{type:"application/json"}));const a=create("a");a.href=url;a.download="iGateConfigurationModified.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 </script></body></html>
