@@ -1,6 +1,6 @@
 const assert=require("node:assert/strict");
 const fs=require("node:fs"),vm=require("node:vm");
-const html=fs.readFileSync("tools/config-generator/index.html","utf8");
+const html=fs.readFileSync("docs/config-generator/index.html","utf8");
 const ctx={module:{exports:{}},TextEncoder};vm.runInNewContext(html.match(/<script id="logic">([\s\S]*?)<\/script>/)[1],ctx);
 const {buildConfig,staticOK}=ctx.module.exports;
 const net={ssid:"Home",password:"example-wifi",dhcp:true,ip:"",gateway:"",subnet:"",dns1:"",dns2:""};

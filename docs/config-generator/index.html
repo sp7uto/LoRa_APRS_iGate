@@ -48,7 +48,7 @@ function buildConfig(v){
   });
   requireValue(goodPassword(v.apPassword)&&goodPassword(v.adminPassword)&&goodPassword(v.otaPassword),"Hasła Auto AP, WWW i OTA: 12–63 ASCII / 12–63 ASCII characters.");
   requireValue(new Set([v.apPassword,v.adminPassword,v.otaPassword]).size===3,"Użyj różnych haseł / Use distinct recovery, admin and OTA passwords.");
-  requireValue(Number.isInteger(+v.freq)&&((+v.freq>=433050000&&+v.freq<=434790000)||(+v.freq>=430000000&&+v.freq<=440000000)||(+v.freq>=863000000&&+v.freq<=870000000)||(+v.freq>=902000000&&+v.freq<=928000000)),"Częstotliwość poza obsługiwanymi zakresami przykładowymi / Frequency outside supported example ranges.");
+  requireValue(Number.isInteger(+v.freq)&&((+v.freq>=430000000&&+v.freq<=440000000)||(+v.freq>=863000000&&+v.freq<=870000000)||(+v.freq>=902000000&&+v.freq<=928000000)),"Częstotliwość poza obsługiwanymi zakresami przykładowymi / Frequency outside supported example ranges.");
   requireValue([5,6,7,8,9,10,11,12].includes(+v.sf)&&[5,6,7,8].includes(+v.cr)&&[62500,125000,250000,500000].includes(+v.bw),"Nieprawidłowe parametry LoRa / Invalid LoRa parameters.");
   requireValue(v.confirmRadio===true,"Potwierdź zgodność z lokalnymi trackerami i pasmem płytki / Confirm local tracker and board-band match.");
   requireValue(v.comment.length<=80&&!/[\x00-\x1f\x7f]/.test(v.comment),"Komentarz: maks. 80 znaków, jedna linia / Comment: max. 80 characters, one line.");

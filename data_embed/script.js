@@ -249,8 +249,8 @@ function loadSettings(settings) {
     document.getElementById("webadmin.username").value                  = settings.webadmin.username;
     document.getElementById("webadmin.password").value                  = settings.webadmin.password;
     WebadminCheckbox.checked    = settings.webadmin.active;
-    WebadminUsername.disabled   = !WebadminCheckbox.check;
-    WebadminPassword.disabled   = !WebadminCheckbox.check;
+    WebadminUsername.disabled   = !WebadminCheckbox.checked;
+    WebadminPassword.disabled   = !WebadminCheckbox.checked;
 
     // Management over APRS
     document.getElementById("remoteManagement.managers").value          = settings.remoteManagement.managers;

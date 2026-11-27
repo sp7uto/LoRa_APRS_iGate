@@ -6,8 +6,9 @@ on:
       - 'docs/wifi-network-management/wiki/**'
       - '.github/workflows/publish-wiki.yml'
       - 'tools/render_wifi_docs.py'
-      - 'tools/config-generator/**'
+      - 'docs/config-generator/**'
       - 'tests/config_generator.test.cjs'
+      - 'tests/config_generator_browser.py'
       - 'tools/add_cover_to_docs.py'
       - 'data_embed/index.html'
       - 'data_embed/script.js'
@@ -47,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: igate-config-generator
-          path: tools/config-generator/index.html
+          path: docs/config-generator/index.html
           if-no-files-found: error
       - name: Validate bilingual source pages
         shell: bash
@@ -64,6 +65,7 @@ jobs:
         run: |
           python -m pip install playwright==1.51.0
           python -m playwright install --with-deps chromium
+          python tests/config_generator_browser.py
           python tools/render_wifi_docs.py --output docs/wifi-network-management/wiki/images/sp7uto
       - name: Upload generated configuration images
         uses: actions/upload-artifact@v4

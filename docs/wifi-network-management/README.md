@@ -50,4 +50,4 @@ Generated from source during Wiki publishing; example values only. / Generowane 
 
 ## Configuration generator / Generator konfiguracji
 
-[Standalone HTML](../../tools/config-generator/index.html) · [Wiki PL/EN](https://github.com/sp7uto/LoRa_APRS_iGate/wiki/Configuration-Generator). Download raw HTML and open offline. / Pobierz HTML i otwórz lokalnie. RX-only, new configuration, no server or telemetry.
+[Standalone HTML](../config-generator/index.html) · [Wiki PL/EN](https://github.com/sp7uto/LoRa_APRS_iGate/wiki/Configuration-Generator). Download raw HTML and open offline. / Pobierz HTML i otwórz lokalnie. RX-only, new configuration, no server or telemetry.

@@ -4,6 +4,8 @@
 
 *Mapa poglądowa — przykładowe stacje, pozycje, odległości i zasięg, nie dane z pomiarów. / Illustrative map — example stations, positions, distances and coverage, not measured data.*
 
+**SP7UTO experimental extension:** [Offline configuration generator](docs/config-generator/index.html) · [Bilingual Wiki](https://github.com/sp7uto/LoRa_APRS_iGate/wiki/Configuration-Generator)
+
 This firmware is for using ESP32 based boards with LoRa Modules and GPS to live in the APRS world.
 
 ![Screenshot](https://github.com/richonguzman/LoRa_APRS_iGate/raw/main/images/iGateOledScreen.jpeg)
