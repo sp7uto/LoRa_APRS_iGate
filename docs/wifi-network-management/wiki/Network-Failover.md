@@ -8,3 +8,9 @@ Opt-in Experimental APRS-IS WiFi failover under Connectivity (off by default). W
 
 ## Status
 Experimental code; CI and hardware tests required. / Kod eksperymentalny; wymagane testy CI i sprzętowe.
+
+## Schemat / Diagram
+
+![APRS-IS failover decision diagram](images/sp7uto/failover.svg)
+
+*Schemat własny SP7UTO, oparty na aktualnej implementacji; nie jest zrzutem interfejsu. / SP7UTO schematic based on the current implementation, not a UI screenshot.*

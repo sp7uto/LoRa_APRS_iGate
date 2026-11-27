@@ -47,6 +47,14 @@ jobs:
             cp "$GITHUB_WORKSPACE/docs/wifi-network-management/wiki/$page.md" "$page.md"
             git add -- "$page.md"
           done
+          # Copy only the project's image directories; never remove other Wiki assets.
+          for folder in ca2rxu sp7uto; do
+            mkdir -p "images/$folder"
+            cp -a "$GITHUB_WORKSPACE/docs/wifi-network-management/wiki/images/$folder/." "images/$folder/"
+            git add -- "images/$folder"
+          done
+          cp "$GITHUB_WORKSPACE/docs/wifi-network-management/wiki/images/ATTRIBUTION.md" images/ATTRIBUTION.md
+          git add -- images/ATTRIBUTION.md
           if git diff --cached --quiet; then
             echo "Wiki already up to date"
             exit 0

@@ -1,5 +1,10 @@
 # Konfiguracja / Configuration
 
+
+![Original CA2RXU Web UI menu](images/ca2rxu/web-menu.png)
+
+*Menu oryginalnego firmware; nowe pola IPv4 i failover opisano niżej / Upstream menu; new fork settings are described below — [CA2RXU upstream](https://github.com/richonguzman/LoRa_APRS_iGate).*
+
 PL: Connectivity → WiFi Access → Add network. Wpisz SSID i hasło. Wybierz DHCP lub Static IPv4. W trybie statycznym podaj wolny adres urządzenia, maskę, bramę i DNS1; DNS2 jest opcjonalny. Brama musi leżeć w tej samej podsieci. Move up / Move down ustala kolejność prób. Zachowaj Auto AP jako drogę odzyskania.
 
 EN: Connectivity → WiFi Access → Add network. Enter SSID and passphrase, then DHCP or Static IPv4. For static addressing supply an unused IP, subnet mask, gateway and primary DNS; secondary DNS is optional. Gateway must be on the same subnet. Use Move up / Move down to set connection order. Keep Auto AP enabled for recovery.

@@ -2,6 +2,10 @@
 
 **Experimental / Eksperymentalne** — CA2RXU upstream, GPL-3.0-or-later. Target ESP32 / Heltec V3.1.
 
+![Original CA2RXU iGate](wiki/images/ca2rxu/igate-oled.jpeg)
+
+*Oryginalne urządzenie / Upstream illustration: [CA2RXU](https://github.com/richonguzman/LoRa_APRS_iGate).*
+
 ## PL
 Indywidualny DHCP lub statyczny IPv4 dla każdej sieci: IP, brama, maska, DNS1 i opcjonalny DNS2. Brak nowego pola w starszym JSON oznacza DHCP. Kolejność sieci pozostaje bez zmian. Brak IP oznacza nieudane połączenie. Nie instalować na bramce produkcyjnej przed testami.
 
@@ -21,3 +25,15 @@ EN: Move up / Move down controls set profile priority (first wins). Validator ch
 ## Update 3 / Aktualizacja 3
 
 Opt-in APRS-IS session health failover, 3 min unhealthy window, 5 min cooldown, 90 s silent session timeout; no external probes or healthy failback. / Opcjonalny failover sesji APRS-IS, 3 min awarii, 5 min odstępu, 90 s ciszy; bez zewnętrznych sond i automatycznego powrotu. Boot authentication wait removed; bounded individual TCP attempts (DNS may still block). / Usunięto nieskończone oczekiwanie przy starcie; pojedyncze próby TCP, DNS może nadal blokować. See Wiki Network-Failover and Testing. Experimental, pending tests.
+
+## Illustrations / Ilustracje
+
+![Upstream web menu](wiki/images/ca2rxu/web-menu.png)
+
+![Upstream APRS map](wiki/images/ca2rxu/aprs-map.jpg)
+
+*Original upstream screenshots, not fork screenshots / Oryginalne zrzuty, nie interfejs forka.*
+
+![SP7UTO failover diagram](wiki/images/sp7uto/failover.svg)
+
+[Upstream PDF manual](https://drive.google.com/file/d/1Hff_Szd7ks8RC7_RiV6POxPJlclbO05M/view?usp=sharing) · [Wiki](https://github.com/sp7uto/LoRa_APRS_iGate/wiki)
