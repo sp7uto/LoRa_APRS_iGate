@@ -22,3 +22,15 @@ assert(!safeDiffValue("secret","wifi.AP.0.password").includes("secret"));
 applyProfile(edited,"wide1");assert.equal(edited.digi.mode,1);assert.equal(edited.lora.txActive,true);assert.throws(()=>validateEdited(imported,edited,false));assert(validateEdited(imported,edited,true).length>0);
 assert.throws(()=>parseBackup('{"__proto__":{}}'));assert.throws(()=>parseBackup('{"callsign":"SP0ABC"}'));
 console.log("Import preservation and profile tests passed");
+
+const {parseCoordinate}=ctx.module.exports;
+const close=(a,b)=>assert(Math.abs(a-b)<1e-10,a+" != "+b);
+for(const s of ["51.5903333333333","51,5903333333333","51°35.42′ N","N 51 35,42","51:35:25.2 N","51°35′25,2″ N","5135.42N"])close(parseCoordinate(s,"lat"),51+35.42/60);
+for(const s of ["18.737","18,737","18°44.22' E","E 18 44 13.2","01844.22E"])close(parseCoordinate(s,"lon"),18.737);
+close(parseCoordinate("51°35.42′ S","lat"),-(51+35.42/60));
+close(parseCoordinate("W 18:44:13.2","lon"),-18.737);
+assert.equal(parseCoordinate("-90","lat"),-90);assert.equal(parseCoordinate("180° E","lon"),180);
+for(const s of [""," ","91","90 1","51 60","51 59 60","51E","-51N","+51S","N51N","51.5 20","51 30.5 2","51°35′25.2″ nonsense","1e1","51,2.3","5135.42","51:","--51"])assert.throws(()=>parseCoordinate(s,"lat"),s);
+assert.throws(()=>parseCoordinate("180 0 0.1","lon"));assert.throws(()=>parseCoordinate("18N","lon"));
+const converted=buildConfig({...v,lat:"51°35.42′ N",lon:"01844.22E"});close(converted.beacon.latitude,51+35.42/60);close(converted.beacon.longitude,18.737);
+console.log("Coordinate format tests passed");

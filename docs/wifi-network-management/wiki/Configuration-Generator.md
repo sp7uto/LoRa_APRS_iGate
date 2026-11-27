@@ -17,3 +17,17 @@ GitHub Pages: planned URL [Configuration Generator](https://sp7uto.github.io/LoR
 PL: Wczytaj istniejący JSON przyciskiem **Wczytaj istniejący JSON**. Oryginał i niezmienione pola pozostają zachowane, także hasła i nieznane klucze. Przycisk uzupełniania Wi-Fi dodaje tylko brakujące pola DHCP/static i APRS-IS failover (bez nadpisania istniejących). Można zmieniać kolejność AP, parametry radiowe i pozostałe znane ustawienia; brakujące pola są oznaczone. Profile RX-only, RX/TX, WIDE1, WIDE2, samodzielny WIDE1 i awaryjny digi są opcjonalne i wymagają świadomego zastosowania. Przed eksportem sprawdź różnice (hasła zamaskowane). Zmiana ustawień nadawania wymaga potwierdzenia. Eksport to osobny plik JSON; nie zapisuje nic na urządzeniu. Nieznane klucze zachowuje generator, ale firmware może je ignorować lub usunąć po zapisaniu. Nie importować pliku innego urządzenia, np. trackera lub RP2350 Ethernet. Test na fizycznym urządzeniu nadal wymagany.
 
 EN: Import an existing iGate JSON with **Import existing JSON**. Original and untouched values, passwords and unknown keys remain intact. Wi-Fi upgrade adds missing DHCP/static and APRS-IS failover keys only. Edit priority, radio and other known settings; missing fields are marked. Optional RX-only, RX/TX, WIDE1, WIDE2, standalone WIDE1 and backup digi profiles require explicit application. Review masked differences and confirm RF changes before export. Export is a separate JSON, not a device write. Unknown keys are preserved by the generator, but firmware may discard them on Save. Tracker and RP2350 Ethernet backups are unsupported. Hardware testing still required.
+
+## Współrzędne / Coordinates
+
+W obu trybach / Both modes: DD (decimal degrees), DDM (degrees and decimal minutes), DMS (degrees, minutes, seconds) and APRS compact with hemisphere. Dot or comma, N/S/E/W prefix or suffix, signed decimal degrees, spaces or colons. / Kropka lub przecinek, kierunek przed lub po liczbie, znak +/−, spacje lub dwukropki.
+
+| Format | Latitude | Longitude |
+| --- | --- | --- |
+| DD | 51.590333 | 18.737 |
+| DD with comma | 51,590333 | 18,737 |
+| DDM | 51°35.42′ N | 18°44.22′ E |
+| DMS | 51°35′25.2″ N | 18°44′13.2″ E |
+| APRS | 5135.42N | 01844.22E |
+
+All edited coordinates are exported as numeric WGS84 decimal degrees; S/W negative. Invalid ranges, minutes or seconds ≥60, conflicting sign/direction or wrong hemisphere are rejected. Untouched imported coordinates are preserved. / Eksport edytowanych współrzędnych w liczbowych stopniach dziesiętnych WGS84; S/W ujemne. Błędne zakresy, minuty/sekundy ≥60 i sprzeczne kierunki odrzucane. Nieedytowane współrzędne importu pozostają bez zmian.

@@ -16,7 +16,7 @@ with sync_playwright() as p, TemporaryDirectory() as tmp:
         route.abort()
     page.route("http**/*", block)
     page.goto((root / "docs/config-generator/index.html").as_uri())
-    for key, val in {"callsign":"SP0ABC-10","passcode":"12345","lat":"51.5","lon":"18.7"}.items():
+    for key, val in {"callsign":"SP0ABC-10","passcode":"12345","lat":"51°35.42′ N","lon":"01844.22E"}.items():
         page.locator("#"+key).fill(val)
     first = page.locator(".network").first
     first.locator('[data-field="ssid"]').fill("Example-AP")
@@ -41,6 +41,8 @@ with sync_playwright() as p, TemporaryDirectory() as tmp:
     target = Path(tmp) / "config.json"
     d.value.save_as(target)
     c = json.loads(target.read_text())
+    assert abs(c["beacon"]["latitude"] - (51+35.42/60)) < 1e-10
+    assert abs(c["beacon"]["longitude"] - 18.737) < 1e-10
     assert c["lora"]["txActive"] is False
     assert c["digi"]["backupDigiMode"] is False
     assert c["wifi"]["aprsFailover"] is True
@@ -67,6 +69,8 @@ with sync_playwright() as p, TemporaryDirectory() as tmp:
     page.locator("#upgradeWifi").click()
     page.locator('[data-path="wifi.AP.0.dhcp"]').select_option("true")
     page.locator('[data-path="beacon.comment"]').fill("Modified beacon")
+    page.locator('[data-path="beacon.latitude"]').fill("52°15′30″ N")
+    page.locator('[data-path="beacon.longitude"]').fill("18,75")
     page.locator("#editProfile").select_option("wide1")
     page.locator("#applyProfile").click()
     page.locator("#reviewEdit").click()
@@ -83,6 +87,8 @@ with sync_playwright() as p, TemporaryDirectory() as tmp:
     assert mod["mqtt"]["password"] == legacy["mqtt"]["password"]
     assert mod["wifi"]["AP"][0]["password"] == legacy["wifi"]["AP"][0]["password"]
     assert mod["beacon"]["comment"] == "Modified beacon"
+    assert abs(mod["beacon"]["latitude"] - (52+15/60+30/3600)) < 1e-10
+    assert mod["beacon"]["longitude"] == 18.75
     assert mod["digi"]["mode"] == 1 and mod["lora"]["txActive"] is True
     assert "keep-this-secret" not in page.locator("#editDiff").inner_text()
     assert not errors, errors

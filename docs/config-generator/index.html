@@ -15,9 +15,9 @@
 <section><h2 data-pl="1. Stacja" data-en="1. Station">1. Stacja</h2><div class="grid">
 <label><span data-pl="Znak (z -10)" data-en="Callsign (with -10)">Znak (z -10)</span><input id="callsign" placeholder="SP0ABC-10" required></label>
 <label><span data-pl="Twój APRS-IS passcode" data-en="Your APRS-IS passcode">Twój APRS-IS passcode</span><input id="passcode" type="password" inputmode="numeric" required></label>
-<label><span data-pl="Szerokość geograficzna" data-en="Latitude">Szerokość geograficzna</span><input id="lat" type="number" min="-90" max="90" step="any" required></label>
-<label><span data-pl="Długość geograficzna" data-en="Longitude">Długość geograficzna</span><input id="lon" type="number" min="-180" max="180" step="any" required></label></div>
-<small data-pl="Stopnie dziesiętne. Pozycja beacona będzie publiczna w APRS-IS." data-en="Decimal degrees. Beacon location will be public on APRS-IS.">Stopnie dziesiętne. Pozycja beacona będzie publiczna w APRS-IS.</small></section>
+<label><span data-pl="Szerokość geograficzna" data-en="Latitude">Szerokość geograficzna</span><input id="lat" type="text" placeholder="51.590333 / 51°35.42′ N" spellcheck="false" required></label>
+<label><span data-pl="Długość geograficzna" data-en="Longitude">Długość geograficzna</span><input id="lon" type="text" placeholder="18.737 / 18°44′13.2″ E" spellcheck="false" required></label></div>
+<small data-pl="DD, DDM, DMS lub APRS: 51,590333 · 51°35,42′ N · 51°35′25,2″ N · 5135.42N. Współrzędne są przeliczane na stopnie dziesiętne. Pozycja beacona będzie publiczna w APRS-IS." data-en="DD, DDM, DMS or APRS: 51.590333 · 51°35.42′ N · 51°35′25.2″ N · 5135.42N. Converted to decimal degrees. Beacon location will be public on APRS-IS.">DD, DDM, DMS lub APRS: 51,590333 · 51°35,42′ N · 51°35′25,2″ N · 5135.42N. Współrzędne są przeliczane na stopnie dziesiętne. Pozycja beacona będzie publiczna w APRS-IS.</small><output id="coordPreview" aria-live="polite"></output></section>
 <section><h2 data-pl="2. Wi-Fi" data-en="2. Wi-Fi">2. Wi-Fi</h2><p class="muted" data-pl="Pierwsza sieć ma najwyższy priorytet. DHCP wystarczy w większości przypadków." data-en="First network has highest priority. DHCP is sufficient in most cases.">Pierwsza sieć ma najwyższy priorytet. DHCP wystarczy w większości przypadków.</p><div id="networks"></div><button type="button" id="add" data-pl="+ Dodaj sieć awaryjną" data-en="+ Add backup network">+ Dodaj sieć awaryjną</button><label class="check"><input type="checkbox" id="failover"><span data-pl="Eksperymentalny failover APRS-IS (min. 2 sieci, domyślnie wyłączony)" data-en="Experimental APRS-IS failover (min. 2 networks, off by default)">Eksperymentalny failover APRS-IS (min. 2 sieci, domyślnie wyłączony)</span></label></section>
 <section><h2 data-pl="3. Parametry radiowe" data-en="3. Radio parameters">3. Parametry radiowe</h2><label><span data-pl="Profil odbioru" data-en="Receive profile">Profil odbioru</span><select id="preset"><option value="">— Select / Wybierz —</option><option value="standard">CA2RXU default — 433.775 MHz / SF12 / CR4/5 / BW125</option><option value="local">SP7UTO example — 434.855 MHz / SF9 / CR4/7 / BW125</option><option value="custom">Custom / Własny</option></select></label><div class="grid" style="margin-top:12px">
 <label>Frequency (Hz)<input id="freq" type="number" step="1" required></label><label>SF<select id="sf"><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label><label>Coding rate<select id="cr"><option value="5">4/5</option><option value="6">4/6</option><option value="7">4/7</option><option value="8">4/8</option></select></label><label>Bandwidth<select id="bw"><option value="62500">62.5 kHz</option><option value="125000">125 kHz</option><option value="250000">250 kHz</option><option value="500000">500 kHz</option></select></label></div><label class="check"><input type="checkbox" id="confirmRadio" required><span data-pl="Sprawdziłem zgodność pasma płytki i parametrów z lokalnymi trackerami." data-en="I checked board band and local tracker settings.">Sprawdziłem zgodność pasma płytki i parametrów z lokalnymi trackerami.</span></label><small data-pl="Przykład SP7UTO nie jest uniwersalnym standardem krajowym." data-en="SP7UTO example is not a universal national standard.">Przykład SP7UTO nie jest uniwersalnym standardem krajowym.</small></section>
@@ -33,10 +33,37 @@ function ipv4(s){let p=s.split(".");return p.length===4&&p.every(x=>/^(0|[1-9][0
 function unicast(n){return n!==null&&(n>>>24)>0&&(n>>>24)!==127&&(n>>>24)<224}
 function staticOK(n){let a=ipv4(n.ip),g=ipv4(n.gateway),m=ipv4(n.subnet),d=ipv4(n.dns1),e=n.dns2?ipv4(n.dns2):null;if(!unicast(a)||!unicast(g)||!unicast(d)||(n.dns2&&!unicast(e))||m===null||a===g)return false;let host=(~m)>>>0;return m!==0&&host>=3&&((host&(host+1))===0)&&((a&m)===(g&m))&&((a&host)>>>0)!==0&&((a&host)>>>0)!==host&&((g&host)>>>0)!==0&&((g&host)>>>0)!==host}
 function goodPassword(s){return /^[\x20-\x7e]{12,63}$/.test(s)}
+
+// WGS84 decimal degrees, DDM, DMS and APRS compact DDMM.mm/DDDMM.mm.
+function parseCoordinate(raw,axis){
+ const lat=axis==="lat";requireValue(lat||axis==="lon","Unknown coordinate axis");
+ const fail=()=>{throw Error(lat?"Nieprawidłowa szerokość geograficzna / Invalid latitude (±90°).":"Nieprawidłowa długość geograficzna / Invalid longitude (±180°).")};
+ let s=String(raw??"").trim().toUpperCase().replace(/\u2212/g,"-").replace(/,/g,".").replace(/[º˚]/g,"°").replace(/[′’‘]/g,"'").replace(/[″“”]/g,'"');
+ let hem="";
+ if(/^[NSEW]/.test(s)){hem=s[0];s=s.slice(1).trim()}
+ if(/[NSEW]$/.test(s)){if(hem)fail();hem=s.at(-1);s=s.slice(0,-1).trim()}
+ if(hem&&!(lat?"NS":"EW").includes(hem))fail();
+ let sign="";if(/^[+-]/.test(s)){sign=s[0];s=s.slice(1).trim()}
+ if(hem&&((sign==="-"&&"NE".includes(hem))||(sign==="+"&&"SW".includes(hem))))fail();
+ const num="\\d+(?:\\.\\d+)?",integer="\\d+";
+ let d,m=0,sec=0,match;
+ const compact=new RegExp("^("+ (lat?"\\d{2}":"\\d{3}") +")(\\d{2}\\.\\d+)$");
+ if(hem&&(match=s.match(compact))){d=Number(match[1]);m=Number(match[2])}
+ else if((match=s.match(new RegExp("^("+num+")\\s*°?$")))){d=Number(match[1])}
+ else if((match=s.match(new RegExp("^("+integer+")(?:\\s*°\\s*|\\s*:\\s*|\\s+)("+num+")\\s*'?$")))){d=Number(match[1]);m=Number(match[2])}
+ else if((match=s.match(new RegExp("^("+integer+")(?:\\s*°\\s*|\\s*:\\s*|\\s+)("+integer+")(?:\\s*'\\s*|\\s*:\\s*|\\s+)("+num+")\\s*\"?$")))){d=Number(match[1]);m=Number(match[2]);sec=Number(match[3])}
+ else fail();
+ const max=lat?90:180;
+ if(![d,m,sec].every(Number.isFinite)||m>=60||sec>=60||d>max||(d===max&&(m!==0||sec!==0)))fail();
+ const value=d+m/60+sec/3600;
+ if(value>max)fail();
+ return value===0?0:(sign==="-"||hem==="S"||hem==="W"?-value:value);
+}
+
 function buildConfig(v){
   const c=copy(DEFAULTS), call=v.callsign.trim().toUpperCase();
   requireValue(/^[A-Z0-9]{3,6}-10$/.test(call)&&/[A-Z]/.test(call)&&/[0-9]/.test(call)&&!/^N[O0]CALL/.test(call),"Znak bramki: poprawny znak z SSID -10 / Valid callsign with -10.");
-  requireValue(v.lat!==""&&v.lon!==""&&Number.isFinite(+v.lat)&&Number.isFinite(+v.lon)&&Math.abs(+v.lat)<=90&&Math.abs(+v.lon)<=180,"Podaj prawidłową pozycję / Enter valid coordinates.");
+  const latitude=parseCoordinate(v.lat,"lat"),longitude=parseCoordinate(v.lon,"lon");
   requireValue(/^\d{1,5}$/.test(v.passcode)&&+v.passcode<=32767,"Podaj własny APRS-IS passcode / Enter your APRS-IS passcode.");
   requireValue(/^[A-Za-z0-9.-]+$/.test(v.server)&&v.server.length<=253&&Number.isInteger(+v.port)&&+v.port>=1&&+v.port<=65535,"Nieprawidłowy serwer lub port APRS-IS / Invalid APRS-IS server or port.");
   requireValue(Number.isInteger(+v.radius)&&+v.radius>=1&&+v.radius<=999,"Promień filtra 1–999 km / Filter radius 1–999 km.");
@@ -58,7 +85,7 @@ function buildConfig(v){
   requireValue(v.confirmRadio===true,"Potwierdź zgodność z lokalnymi trackerami i pasmem płytki / Confirm local tracker and board-band match.");
   requireValue(v.comment.length<=80&&!/[\x00-\x1f\x7f]/.test(v.comment),"Komentarz: maks. 80 znaków, jedna linia / Comment: max. 80 characters, one line.");
   c.callsign=call;c.aprs_is={...c.aprs_is,active:true,passcode:v.passcode,server:v.server,port:+v.port,filter:"m/"+(+v.radius),messagesToRF:false,objectsToRF:false};
-  Object.assign(c.beacon,{latitude:+v.lat,longitude:+v.lon,comment:v.comment||"LoRa APRS RX iGate",interval:+v.interval,overlay:"L",symbol:"&",path:"",sendViaAPRSIS:true,sendViaRF:false,statusActive:false,gpsActive:false});
+  Object.assign(c.beacon,{latitude,longitude,comment:v.comment||"LoRa APRS RX iGate",interval:+v.interval,overlay:"L",symbol:"&",path:"",sendViaAPRSIS:true,sendViaRF:false,statusActive:false,gpsActive:false});
   Object.assign(c.lora,{rxActive:true,rxFreq:+v.freq,rxSpreadingFactor:+v.sf,rxCodingRate4:+v.cr,rxSignalBandwidth:+v.bw,txActive:false,txFreq:+v.freq,txSpreadingFactor:+v.sf,txCodingRate4:+v.cr,txSignalBandwidth:+v.bw});
   Object.assign(c.digi,{mode:0,ecoMode:0,backupDigiMode:false});
   c.wifi.autoAP={enabled:true,password:v.apPassword,timeout:10};c.wifi.aprsFailover=!!v.failover&&c.wifi.AP.length>1;
@@ -127,7 +154,7 @@ function validateEdited(original,c,confirmRF){
  return d;
 }
 
-if(typeof module!=="undefined")module.exports={buildConfig,ipv4,staticOK,parseBackup,diffConfig,upgradeWiFi,applyProfile,validateEdited,safeDiffValue};
+if(typeof module!=="undefined")module.exports={buildConfig,ipv4,staticOK,parseBackup,diffConfig,upgradeWiFi,applyProfile,validateEdited,safeDiffValue,parseCoordinate};
 </script><script>
 const $=id=>document.getElementById(id);let lang="pl",generated=null;
 function translate(){document.documentElement.lang=lang;document.querySelectorAll("[data-"+lang+"]").forEach(e=>e.textContent=e.dataset[lang]);$("language").textContent=lang==="pl"?"English":"Polski"}
@@ -141,8 +168,10 @@ function addNetwork(){const r=document.createElement("div");r.className="network
 $("add").onclick=addNetwork;addNetwork();
 $("preset").onchange=()=>{const p=$("preset").value;let vals=p==="standard"?[433775000,12,5,125000]:p==="local"?[434855000,9,7,125000]:null;if(vals)["freq","sf","cr","bw"].forEach((id,i)=>$(id).value=vals[i]);$("confirmRadio").checked=false;invalidate()};
 ["freq","sf","cr","bw"].forEach(id=>$(id).addEventListener("input",()=>{$("preset").value="custom";$("confirmRadio").checked=false}));
+function previewCoordinates(){const out=$("coordPreview");try{if(!$("lat").value||!$("lon").value){out.textContent="";return}out.textContent="DD: "+parseCoordinate($("lat").value,"lat").toFixed(8)+"°, "+parseCoordinate($("lon").value,"lon").toFixed(8)+"°"}catch(e){out.textContent=e.message}}
+["lat","lon"].forEach(id=>$(id).addEventListener("input",previewCoordinates));
 $("form").addEventListener("input",invalidate);
-$("form").onsubmit=e=>{e.preventDefault();invalidate();try{const v={};["callsign","passcode","lat","lon","freq","sf","cr","bw","server","port","radius","interval","tz","comment","apPassword","adminPassword","otaPassword"].forEach(id=>v[id]=$(id).value);v.failover=$("failover").checked;v.confirmRadio=$("confirmRadio").checked;v.networks=[...$("networks").children].map(r=>Object.fromEntries([...r.querySelectorAll("[data-field]")].map(e=>[e.dataset.field,e.dataset.field==="dhcp"?e.value==="1":e.type==="checkbox"?e.checked:e.value])));generated=buildConfig(v);const c=generated;$("review").textContent=c.callsign+" | RX-only | "+c.lora.rxFreq+" Hz | SF"+c.lora.rxSpreadingFactor+" | CR4/"+c.lora.rxCodingRate4+" | BW "+c.lora.rxSignalBandwidth+" Hz\nAPRS-IS: "+c.aprs_is.server+":"+c.aprs_is.port+" | "+c.aprs_is.filter+"\n"+c.wifi.AP.map((n,i)=>(i+1)+". "+n.ssid+" — "+(n.dhcp?"DHCP":n.ip)).join("\n")+"\nAuto AP: ON | Failover: "+(c.wifi.aprsFailover?"ON":"OFF")+" | TX: OFF | DIGI: OFF";$("review").hidden=false;$("result").textContent=lang==="pl"?"Konfiguracja poprawna składniowo. Sprawdź podsumowanie.":"Configuration validated. Review the summary.";$("download").disabled=false}catch(err){$("result").textContent=err.message}};
+$("form").onsubmit=e=>{e.preventDefault();invalidate();try{const v={};["callsign","passcode","lat","lon","freq","sf","cr","bw","server","port","radius","interval","tz","comment","apPassword","adminPassword","otaPassword"].forEach(id=>v[id]=$(id).value);v.failover=$("failover").checked;v.confirmRadio=$("confirmRadio").checked;v.networks=[...$("networks").children].map(r=>Object.fromEntries([...r.querySelectorAll("[data-field]")].map(e=>[e.dataset.field,e.dataset.field==="dhcp"?e.value==="1":e.type==="checkbox"?e.checked:e.value])));generated=buildConfig(v);const c=generated;$("review").textContent=c.callsign+" | "+c.beacon.latitude.toFixed(8)+"°, "+c.beacon.longitude.toFixed(8)+"° | RX-only | "+c.lora.rxFreq+" Hz | SF"+c.lora.rxSpreadingFactor+" | CR4/"+c.lora.rxCodingRate4+" | BW "+c.lora.rxSignalBandwidth+" Hz\nAPRS-IS: "+c.aprs_is.server+":"+c.aprs_is.port+" | "+c.aprs_is.filter+"\n"+c.wifi.AP.map((n,i)=>(i+1)+". "+n.ssid+" — "+(n.dhcp?"DHCP":n.ip)).join("\n")+"\nAuto AP: ON | Failover: "+(c.wifi.aprsFailover?"ON":"OFF")+" | TX: OFF | DIGI: OFF";$("review").hidden=false;$("result").textContent=lang==="pl"?"Konfiguracja poprawna składniowo. Sprawdź podsumowanie.":"Configuration validated. Review the summary.";$("download").disabled=false}catch(err){$("result").textContent=err.message}};
 $("download").onclick=()=>{if(!generated)return;const url=URL.createObjectURL(new Blob([JSON.stringify(generated,null,2)+"\n"],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="iGateConfigurationBackup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 
 let original=null,edited=null,editReady=false;
@@ -153,7 +182,8 @@ const enums={"digi.mode":[[0,"OFF"],[1,"WIDE1 fill-in"],[2,"WIDE2 + WIDE1"],[3,"
 function field(p,sample,parent){
  const value=getPath(edited,p),exists=value!==undefined;
  if(exists&&(value===null||typeof value==="object")){const n=create("small",p.at(-1)+" — structured / preserved");parent.append(n);return}
- const type=typeof (exists?value:sample);
+ const axis=p.join(".")==="beacon.latitude"?"lat":p.join(".")==="beacon.longitude"?"lon":null;
+ const type=axis?"number":typeof (exists?value:sample);
  if(!["string","boolean","number"].includes(type))return;
  const label=create("label",p.at(-1)+(exists?"":" (missing / brak)")),input=create(enums[p.join(".")]||type==="boolean"?"select":"input");
  input.dataset.path=p.join(".");
@@ -163,17 +193,18 @@ function field(p,sample,parent){
   if(exists&&!opts.some(v=>v[0]===value))input.add(new Option(String(value),String(value)));
   opts.forEach(([v,l])=>input.add(new Option(l,String(v))));input.value=exists?String(value):"";
  }else{
-  input.type=type==="number"?"number":secretPath(p.join("."))?"password":"text";
-  if(type==="number")input.step="any";
+  input.type=type==="number"&&!axis?"number":secretPath(p.join("."))?"password":"text";
+  if(type==="number"&&!axis)input.step="any";
   input.value=exists?String(value):"";if(!exists)input.placeholder=secretPath(p.join("."))?"":String(sample);
  }
  const commit=()=>{if(input.value===""&&type!=="string"){input.dataset.invalid="1";dirtyEdit();return}delete input.dataset.invalid;
-  const next=type==="boolean"?input.value==="true":type==="number"?Number(input.value):input.value;
+  let next;try{next=axis?parseCoordinate(input.value,axis):type==="boolean"?input.value==="true":type==="number"?Number(input.value):input.value}catch(e){input.dataset.invalid="1";input.setCustomValidity(e.message);dirtyEdit();return}
+  input.setCustomValidity("");
   if(type==="number"&&!Number.isFinite(next)){input.dataset.invalid="1";dirtyEdit();return}
   putPath(edited,p,next);dirtyEdit();
  };
  input.addEventListener("input",commit);input.addEventListener("change",commit);
- label.append(input);parent.append(label);
+ label.append(input);if(axis){const hint=create("small","DD / DDM / DMS / APRS");label.append(hint);input.addEventListener("input",()=>{try{hint.textContent="DD: "+parseCoordinate(input.value,axis).toFixed(8)+"°"}catch(e){hint.textContent=e.message}})}parent.append(label);
 }
 function renderEditor(){
  const target=$("editFields");target.replaceChildren();

@@ -12,3 +12,5 @@ No stable release has been published / Nie opublikowano wersji stabilnej.
 - Experimental packaging and full flash recovery documentation / Pakiet eksperymentalny i procedura kopii całego flash.
 
 - Offline generator: import existing iGate JSON, preserve untouched keys, add missing Wi-Fi fields, edit known values, optional station profiles, masked diff and separate export. / Import i edycja JSON bez nadpisywania pozostałych pól.
+
+- Configuration generator: DD, DDM, DMS and compact APRS coordinate parsing in new and imported configurations. / Obsługa wielu formatów współrzędnych.
