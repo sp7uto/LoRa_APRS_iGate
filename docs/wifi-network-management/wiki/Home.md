@@ -1,13 +1,26 @@
-# LoRa APRS iGate – Wi-Fi Network Management
+# LoRa APRS iGate — Wi-Fi Network Management
 
-Experimental fork by SP7UTO of CA2RXU's LoRa APRS iGate. GPL-3.0-or-later.
+**SP7UTO experimental fork • CA2RXU upstream • GPL-3.0-or-later**
 
-## Polski
-Celem jest stabilna łączność bramek bezobsługowych. Pierwszy etap: DHCP lub statyczny IPv4 dla każdego AP, priorytety według kolejności, kontrola poprawności adresacji. Nie zmieniamy domyślnych parametrów radiowych. Firmware rozwojowy – bez gwarancji stabilności.
-- [Konfiguracja / Configuration](Configuration)
-- [Testy i odzyskiwanie / Tests and recovery](Testing)
+## 🇵🇱 Polski
 
-## English
-The goal is reliable connectivity for unattended iGates. First phase: per-AP DHCP or static IPv4, ordered priority, address validation. Radio defaults remain unchanged. Experimental firmware, not a production release.
+Rozszerzenie o indywidualną adresację IPv4 i zarządzanie wieloma sieciami Wi-Fi w bezobsługowych bramkach APRS. Główna gałąź pozostaje zgodna z projektem CA2RXU; nasze zmiany są rozwijane osobno. Nie jest to jeszcze wydanie produkcyjne.
+
+## 🇬🇧 English
+
+Per-network IPv4 addressing and Wi-Fi management for unattended APRS gateways. The upstream main branch is preserved; our changes live in a separate development branch. This is not a production release yet.
+
+## 📚 Dokumentacja / Documentation
+
+- [Hardware](Hardware)
+- [Installation](Installation)
 - [Configuration](Configuration)
-- [Tests and recovery](Testing)
+- [Network failover](Network-Failover)
+- [APRS-IS](APRS-IS)
+- [Backup and restore](Backup-and-Restore)
+- [Testing](Testing)
+- [Troubleshooting](Troubleshooting)
+- [Changelog](Changelog)
+- [Roadmap](Roadmap)
+
+[Development branch](https://github.com/sp7uto/LoRa_APRS_iGate/tree/feature/wifi-network-management) · [Upstream CA2RXU](https://github.com/richonguzman/LoRa_APRS_iGate)
