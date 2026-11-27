@@ -5,7 +5,7 @@
 <h1 data-pl="Generator konfiguracji iGate" data-en="iGate Configuration Generator">Generator konfiguracji iGate</h1>
 <button type="button" id="language">English</button>
 <p data-pl="Heltec V3/V3.1 · JSON offline" data-en="Heltec V3/V3.1 · Offline JSON">Tryb RX-only · Heltec V3/V3.1 · JSON offline</p>
-<p id="newNotice" class="notice" data-pl="Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce." data-en="New configuration, not an existing backup editor. TX and digipeater always disabled. Nothing is sent to a server or saved in the browser.">Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce.</p>
+<p id="newNotice" class="notice" data-pl="W trybie nowej konfiguracji TX i digipeater są wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce." data-en="In new configuration mode TX and digipeater are disabled. Nothing is sent to a server or saved in the browser.">Nowa konfiguracja, nie edycja istniejącej kopii. TX i digipeater są zawsze wyłączone. Nic nie jest wysyłane do serwera ani zapisywane w przeglądarce.</p>
 <section><h2 data-pl="Wybierz sposób pracy" data-en="Choose workflow">Wybierz sposób pracy</h2><div class="buttons"><button type="button" id="newMode" data-pl="Nowa konfiguracja" data-en="New configuration">Nowa konfiguracja</button><button type="button" id="importMode" class="primary" data-pl="Wczytaj istniejący JSON" data-en="Import existing JSON">Wczytaj istniejący JSON</button></div><input id="importFile" type="file" accept=".json,application/json" hidden><output id="importStatus" role="status"></output></section>
 <div id="editPanel" hidden>
 <section><h2 data-pl="Edycja istniejącej konfiguracji" data-en="Edit existing configuration">Edycja istniejącej konfiguracji</h2><p class="notice" data-pl="Oryginalny plik pozostaje nietknięty. Wszystkie nieedytowane wartości, również nieznane pola, pozostają bez zmian. Eksport nie zapisuje niczego w urządzeniu." data-en="Original file stays untouched. Unedited values, including unknown keys, remain unchanged. Export does not write to the device.">Oryginalny plik pozostaje nietknięty. Wszystkie nieedytowane wartości, również nieznane pola, pozostają bez zmian. Eksport nie zapisuje niczego w urządzeniu.</p><p id="editName"></p><div class="buttons"><button type="button" id="upgradeWifi" data-pl="Uzupełnij brakujące pola Wi-Fi" data-en="Add missing Wi-Fi fields">Uzupełnij brakujące pola Wi-Fi</button><button type="button" id="resetEdit" data-pl="Cofnij wszystkie zmiany" data-en="Reset all changes">Cofnij wszystkie zmiany</button></div>
@@ -167,9 +167,9 @@ function field(p,sample,parent){
   if(type==="number")input.step="any";
   input.value=exists?String(value):"";if(!exists)input.placeholder=secretPath(p.join("."))?"":String(sample);
  }
- const commit=()=>{if(input.value===""&&(type!=="string"||!exists))return;
+ const commit=()=>{if(input.value===""&&type!=="string"){input.dataset.invalid="1";dirtyEdit();return}delete input.dataset.invalid;
   const next=type==="boolean"?input.value==="true":type==="number"?Number(input.value):input.value;
-  if(type==="number"&&!Number.isFinite(next))return;
+  if(type==="number"&&!Number.isFinite(next)){input.dataset.invalid="1";dirtyEdit();return}
   putPath(edited,p,next);dirtyEdit();
  };
  input.addEventListener("input",commit);input.addEventListener("change",commit);
@@ -200,6 +200,6 @@ $("upgradeWifi").onclick=()=>{upgradeWiFi(edited);renderEditor();dirtyEdit()};
 $("resetEdit").onclick=()=>{edited=copy(original);$("editProfile").value="";renderEditor();dirtyEdit()};
 $("applyProfile").onclick=()=>{if(!$("editProfile").value)return;applyProfile(edited,$("editProfile").value);renderEditor();dirtyEdit()};
 $("editConfirmRF").onchange=()=>{editReady=false;$("downloadEdit").disabled=true};
-$("reviewEdit").onclick=()=>{try{validateEdited(original,edited,$("editConfirmRF").checked);editReady=true;$("downloadEdit").disabled=false;$("editResult").textContent="Validated / Sprawdzono. Review all differences before restore."}catch(e){editReady=false;$("downloadEdit").disabled=true;$("editResult").textContent=e.message}};
+$("reviewEdit").onclick=()=>{try{requireValue(!$("editFields").querySelector("[data-invalid]"),"Complete the edited numeric or choice field / Uzupełnij edytowane pole.");validateEdited(original,edited,$("editConfirmRF").checked);editReady=true;$("downloadEdit").disabled=false;$("editResult").textContent="Validated / Sprawdzono. Review all differences before restore."}catch(e){editReady=false;$("downloadEdit").disabled=true;$("editResult").textContent=e.message}};
 $("downloadEdit").onclick=()=>{if(!editReady)return;const url=URL.createObjectURL(new Blob([JSON.stringify(edited,null,2)+"\n"],{type:"application/json"}));const a=create("a");a.href=url;a.download="iGateConfigurationModified.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 </script></body></html>
