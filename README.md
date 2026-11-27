@@ -1,5 +1,9 @@
 # CA2RXU LoRa APRS iGate/Digipeater
 
+![SP7UTO-10 — LoRa APRS iGate in Sieradz](docs/wifi-network-management/wiki/images/sp7uto/igate-cover.jpg)
+
+*Mapa poglądowa — przykładowe stacje, pozycje, odległości i zasięg, nie dane z pomiarów. / Illustrative map — example stations, positions, distances and coverage, not measured data.*
+
 This firmware is for using ESP32 based boards with LoRa Modules and GPS to live in the APRS world.
 
 ![Screenshot](https://github.com/richonguzman/LoRa_APRS_iGate/raw/main/images/iGateOledScreen.jpeg)

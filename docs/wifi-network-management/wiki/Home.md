@@ -1,5 +1,9 @@
 # LoRa APRS iGate — Wi-Fi Network Management
 
+![SP7UTO-10 — LoRa APRS iGate in Sieradz](images/sp7uto/igate-cover.jpg)
+
+*Mapa poglądowa — przykładowe stacje, pozycje, odległości i zasięg, nie dane z pomiarów. / Illustrative map — example stations, positions, distances and coverage, not measured data.*
+
 **SP7UTO experimental fork • CA2RXU upstream • GPL-3.0-or-later**
 
 

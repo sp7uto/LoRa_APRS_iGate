@@ -1,5 +1,9 @@
 # Wi-Fi management / Zarządzanie Wi-Fi
 
+![SP7UTO-10 — LoRa APRS iGate in Sieradz](wiki/images/sp7uto/igate-cover.jpg)
+
+*Mapa poglądowa — przykładowe stacje, pozycje, odległości i zasięg, nie dane z pomiarów. / Illustrative map — example stations, positions, distances and coverage, not measured data.*
+
 **Experimental / Eksperymentalne** — CA2RXU upstream, GPL-3.0-or-later. Target ESP32 / Heltec V3.1.
 
 ![Original CA2RXU iGate](wiki/images/ca2rxu/igate-oled.jpeg)
