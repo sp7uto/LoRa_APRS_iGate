@@ -16,3 +16,25 @@ Example only / Przykład (nie kopiować bez sprawdzenia): 192.168.2.50, 255.255.
 PL: Domyślnie OFF. Włączenie jest opcjonalne po testach podstawowych. Wymaga minimum dwóch SSID, aktywnego APRS-IS i wyłączonego Backup Digi. Szczegóły: [Network Failover](Network-Failover).
 
 EN: Default OFF. Enable only after basic connectivity tests. Requires at least two SSIDs, active APRS-IS and backup digi disabled. See [Network Failover](Network-Failover).
+
+## 📸 Nowe pola AP / New AP settings
+
+Zrzuty wygenerowane automatycznie z kodu konfiguratora, z fikcyjnymi danymi. Nie są to zrzuty pracującego urządzenia. / Screenshots rendered automatically from the configuration source with fictional example data, not captured from a live device.
+
+### DHCP
+
+![DHCP profile](images/sp7uto/ap-dhcp.png)
+
+PL: W trybie DHCP pola statycznego IPv4 są ukryte. / EN: Static IPv4 fields are hidden in DHCP mode.
+
+### Static IPv4
+
+![Static IPv4 profile](images/sp7uto/ap-static-ipv4.png)
+
+PL: IP address, Default gateway, Subnet mask i Primary DNS są wymagane; Secondary DNS jest opcjonalne. / EN: IP address, Default gateway, Subnet mask and Primary DNS are required; Secondary DNS is optional.
+
+### Priorytety i failover / Priorities and failover
+
+![Two AP profiles and Auto AP failover](images/sp7uto/ap-priority-failover.png)
+
+PL: Move up i Move down ustalają kolejność; opcjonalny failover APRS-IS i Auto AP są osobnymi funkcjami. / EN: Move up and Move down set priority; optional APRS-IS failover and Auto AP are separate functions.

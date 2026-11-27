@@ -37,3 +37,9 @@ Opt-in APRS-IS session health failover, 3 min unhealthy window, 5 min cooldown, 
 ![SP7UTO failover diagram](wiki/images/sp7uto/failover.svg)
 
 [Upstream PDF manual](https://drive.google.com/file/d/1Hff_Szd7ks8RC7_RiV6POxPJlclbO05M/view?usp=sharing) · [Wiki](https://github.com/sp7uto/LoRa_APRS_iGate/wiki)
+
+## New configuration fields / Nowe pola konfiguracji
+
+[DHCP screenshot](https://raw.githubusercontent.com/wiki/sp7uto/LoRa_APRS_iGate/images/sp7uto/ap-dhcp.png) · [Static IPv4 screenshot](https://raw.githubusercontent.com/wiki/sp7uto/LoRa_APRS_iGate/images/sp7uto/ap-static-ipv4.png) · [Priority and failover](https://raw.githubusercontent.com/wiki/sp7uto/LoRa_APRS_iGate/images/sp7uto/ap-priority-failover.png)
+
+Generated from source during Wiki publishing; example values only. / Generowane z kodu podczas publikacji Wiki; wyłącznie dane przykładowe.
