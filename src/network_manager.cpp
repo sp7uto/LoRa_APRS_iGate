@@ -288,6 +288,21 @@ bool NetworkManager::connectWiFi() {
     return false;
 }
 
+bool NetworkManager::connectNextWiFi() {
+    if (!isWiFiConnected() || _wifiNetworks.size() < 2) return false;
+    const int current = _findWiFiNetworkIndex(getWiFiSSID());
+    if (current < 0) return false;
+    _wifiAuthFailSSID = "";
+    // Try other profiles in cyclic order, then restore the previous one.
+    for (size_t offset = 1; offset <= _wifiNetworks.size(); ++offset) {
+        const size_t index = (static_cast<size_t>(current) + offset) % _wifiNetworks.size();
+        disconnectWiFi();
+        if (_connectWiFi(_wifiNetworks[index])) return true;
+    }
+    disconnectWiFi();
+    return false;
+}
+
 bool NetworkManager::connectWiFi(const String& ssid, const String& psk) {
     addWiFiNetwork(ssid, psk);
     return connectWiFi();
@@ -389,8 +404,9 @@ bool NetworkManager::isConnected() const {
 
 // Check if WiFi is connected
 bool NetworkManager::isWiFiConnected() const {
+    if (!_wifiSTAmode || WiFi.status() != WL_CONNECTED) return false;
     const IPAddress ip = WiFi.localIP();
-    return _wifiSTAmode && WiFi.status() == WL_CONNECTED &&
+    return
            ip != IPAddress(0, 0, 0, 0) && ip != IPAddress(255, 255, 255, 255);
 }
 

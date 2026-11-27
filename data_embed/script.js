@@ -237,6 +237,7 @@ function loadSettings(settings) {
     document.getElementById("wifi.autoAP.enabled").checked              = settings.wifi.autoAP.enabled;
     document.getElementById("wifi.autoAP.password").value               = settings.wifi.autoAP.password;
     document.getElementById("wifi.autoAP.timeout").value                = settings.wifi.autoAP.timeout;
+    document.getElementById("wifi.aprsFailover").checked = settings.wifi.aprsFailover === true;
     toggleWiFiAutoAPFields();
 
     // OTA
@@ -1207,7 +1208,7 @@ function applyWiredBuildUi(settings) {
         + "(receive-only iGate): <b>Gate APRS-IS Messages / Objects to RF</b> are not available.");
 
     // --- WiFi: not present on this board
-    ["wifi.autoAP.enabled", "wifi.autoAP.password", "wifi.autoAP.timeout"].forEach(function (id) {
+    ["wifi.autoAP.enabled", "wifi.autoAP.password", "wifi.autoAP.timeout", "wifi.aprsFailover"].forEach(function (id) {
         markUnavailable(id, "This board connects over Ethernet, it has no WiFi");
     });
     const addAp = document.querySelector('[data-bs-target="#add-ap"]');

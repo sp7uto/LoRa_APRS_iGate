@@ -113,6 +113,7 @@ bool applyConfigForm(const String &contentType, const String &body) {
         Config.wifiAutoAP.enabled           = fHas("wifi.autoAP.enabled");
         Config.wifiAutoAP.password          = getParamStringSafe("wifi.autoAP.password", Config.wifiAutoAP.password);
         Config.wifiAutoAP.timeout           = getParamIntSafe("wifi.autoAP.timeout", Config.wifiAutoAP.timeout);
+        Config.wifiAprsFailover = false; // Ethernet-only platform
 
         Config.aprs_is.active               = fHas("aprs_is.active");
         if (Config.aprs_is.active) {

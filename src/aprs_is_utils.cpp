@@ -50,6 +50,10 @@ extern String               versionNumber;
 
 bool        passcodeValid   = false;
 uint32_t    lastServerCheck = 0;
+uint32_t    lastAprsHealth = 0;
+static uint32_t lastConnectAttempt = 0;
+static bool attemptedConnect = false;
+static uint32_t sessionStarted = 0;
 
 
 #ifdef HAS_A7670
@@ -65,21 +69,20 @@ namespace APRS_IS_Utils {
     }
 
     void connect() {
-        Serial.print("Connecting to APRS-IS ...     ");
-        uint8_t count = 0;
-        while (!aprsIsClient.connect(Config.aprs_is.server.c_str(), Config.aprs_is.port) && count < 20) {
-            Serial.println("Didn't connect with server...");
-            delay(1000);
+        const uint32_t now = millis();
+        if (attemptedConnect && now - lastConnectAttempt < 30000UL) return;
+        attemptedConnect = true;
+        lastConnectAttempt = now;
+        passcodeValid = false;
+        aprsIsClient.stop();
+        Serial.println("Connecting to APRS-IS (one attempt)");
+        if (!aprsIsClient.connect(Config.aprs_is.server.c_str(), Config.aprs_is.port, 1500)) {
+            Serial.println("[APRS-IS] Connection failed; retry later");
             aprsIsClient.stop();
-            aprsIsClient.flush();
-            Serial.println("Run client.stop");
-            Serial.println("Trying to connect with Server: " + String(Config.aprs_is.server) + " AprsServerPort: " + String(Config.aprs_is.port));
-            count++;
-            Serial.println("Try: " + String(count));
+            return;
         }
-        if (count == 20) {
-            Serial.println("Tried: " + String(count) + " FAILED!");
-        } else {
+        sessionStarted = millis();
+        {
             Serial.println("Connected!\n(Server: " + String(Config.aprs_is.server) + " / Port: " + String(Config.aprs_is.port) + ")");
             // String filter = "t/m/" + Config.callsign + "/" + (String)Config.aprs_is.reportingDistance;
             String aprsAuth = "user ";
@@ -285,7 +288,7 @@ namespace APRS_IS_Utils {
 
     void processAPRSISPacket(const String& packet) {
         uint32_t currentTime = millis();
-        if (!passcodeValid && packet.indexOf(Config.callsign) != -1) {
+        if (!passcodeValid && packet.startsWith("# logresp ") && packet.indexOf(Config.callsign) != -1) {
             if (packet.indexOf("unverified") != -1 ) {
                 Serial.println("\n****APRS PASSCODE NOT VALID****\n");
                 displayShow(firstLine, "", "    APRS PASSCODE", "    NOT VALID !!!", "", "", "", 3000);
@@ -297,6 +300,7 @@ namespace APRS_IS_Utils {
             }
         }
         if (passcodeValid) {
+            if (!packet.isEmpty()) lastAprsHealth = currentTime;
             if (packet.startsWith("#")) {
                 if (Config.digi.backupDigiMode) lastServerCheck = currentTime;
             } else {
@@ -375,6 +379,13 @@ namespace APRS_IS_Utils {
             A7670_Utils::listenAPRSIS();
         #else
             if (aprsIsClient.connected()) {
+                if ((!passcodeValid && millis() - sessionStarted >= 30000UL) ||
+                    (passcodeValid && Config.wifiAprsFailover && millis() - lastAprsHealth >= 90000UL)) {
+                    Serial.println("[APRS-IS] Session timeout");
+                    aprsIsClient.stop();
+                    passcodeValid = false;
+                    return;
+                }
                 if (aprsIsClient.available()) {
                     // APRS-IS lines end with "\r\n". Reading up to '\r' left the '\n' in the buffer, and the next call then waited the stream's default 1 s
                     // for another '\r' before returning, so the main loop (and with it the radio) stalled for a second after every line from the server.
@@ -390,9 +401,7 @@ namespace APRS_IS_Utils {
     void firstConnection() {
         if (Config.aprs_is.active && networkManager->isConnected() && !aprsIsClient.connected()) {
             connect();
-            while (!passcodeValid) {
-                listenAPRSIS();
-            }
+            // Authentication is processed by the regular loop; never wait forever here.
         }
     }
 

@@ -961,6 +961,11 @@ body{background:var(--msh-bg);color:var(--msh-text);font-family:"Inter",system-u
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-check form-switch mt-3">
+                                    <input type="checkbox" class="form-check-input" name="wifi.aprsFailover" id="wifi.aprsFailover">
+                                    <label class="form-check-label" for="wifi.aprsFailover">Experimental APRS-IS WiFi failover</label>
+                                    <div class="form-text">Opt-in: try another WiFi profile after 3 minutes without a healthy APRS-IS session. Minimum 5 minutes between switches. Inactive in backup digi mode.</div>
+                                </div>
                                 <div id="wifi-autoap-config" style="{{wifi.autoAP.enabled ? '' : 'display:none'}}">
                                     <div class="row mt-3">
                                         <div class="col-6">

@@ -17,6 +17,8 @@
  */
 
 #include <WiFi.h>
+#include <WiFiClient.h>
+#include "wifi_failover_policy.h"
 #include "configuration.h"
 #include "network_manager.h"
 #include "board_pinout.h"
@@ -30,6 +32,10 @@ extern NetworkManager   *networkManager;
 
 extern bool             backupDigiMode;
 extern uint32_t         lastServerCheck;
+extern WiFiClient       aprsIsClient;
+extern bool             passcodeValid;
+extern uint32_t         lastAprsHealth;
+static wifi_failover::Policy failoverPolicy;
 
 uint8_t     wifiCounter         = 0;
 uint32_t    lastBackupDigiTime  = millis();
@@ -47,6 +53,11 @@ namespace WIFI_Utils {
         }
 
         uint32_t currentTime = millis();
+        if (!Config.wifiAprsFailover || !Config.aprs_is.active || Config.digi.backupDigiMode ||
+            !networkManager->isWiFiConnected() || networkManager->isWifiAPActive() ||
+            networkManager->getWiFiNetworkCount() < 2) {
+            failoverPolicy.observe(currentTime, false, false);
+        }
 
         if (backupDigiMode) {
             if (lastServerCheck > lastBackupDigiTime) {     // APRS-IS server spoke after entering backup (with or without a WiFi drop)
@@ -63,6 +74,17 @@ namespace WIFI_Utils {
         if (!backupDigiMode && ((currentTime - lastWiFiCheck) >= 30 * 1000) && !networkManager->isWifiAPActive()) {
             lastWiFiCheck = currentTime;
             if (networkManager->isWiFiConnected()) {
+                const bool eligible = Config.wifiAprsFailover && Config.aprs_is.active && !Config.digi.backupDigiMode &&
+                                      networkManager->getWiFiNetworkCount() >= 2;
+                const bool healthy = aprsIsClient.connected() && passcodeValid &&
+                                     (currentTime - lastAprsHealth < 90000UL);
+                if (failoverPolicy.observe(currentTime, eligible, healthy)) {
+                    Serial.println("[WiFi] APRS-IS unhealthy; trying alternate WiFi profile");
+                    aprsIsClient.stop();
+                    passcodeValid = false;
+                    if (!networkManager->connectNextWiFi() && Config.wifiAutoAP.enabled) startAutoAP();
+                    return;
+                }
                 if (Config.digi.backupDigiMode && (currentTime - lastServerCheck > 30 * 1000)) {
                     Serial.println("*** Server Connection LOST → Backup Digi Mode ***");
                     backupDigiMode = true;

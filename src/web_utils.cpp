@@ -235,6 +235,7 @@ namespace WEB_Utils {
         Config.wifiAutoAP.enabled           = request->hasParam("wifi.autoAP.enabled", true);
         Config.wifiAutoAP.password          = getParamStringSafe("wifi.autoAP.password", Config.wifiAutoAP.password);
         Config.wifiAutoAP.timeout           = getParamIntSafe("wifi.autoAP.timeout", Config.wifiAutoAP.timeout);
+        Config.wifiAprsFailover = request->hasParam("wifi.aprsFailover", true);
 
         Config.aprs_is.active               = request->hasParam("aprs_is.active", true);
         if (Config.aprs_is.active) {

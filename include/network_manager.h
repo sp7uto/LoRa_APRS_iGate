@@ -80,6 +80,7 @@ public:
     bool hasWiFiNetworks() const;
     size_t getWiFiNetworkCount() const;
     bool connectWiFi();
+    bool connectNextWiFi();
     bool connectWiFi(const String& ssid, const String& psk = "");
     bool disconnectWiFi();
     String getWiFiSSID() const;

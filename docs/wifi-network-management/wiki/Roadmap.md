@@ -7,7 +7,8 @@
 - [x] Bilingual documentation sources / Źródła dokumentacji PL/EN
 - [ ] Successful builds on all selected targets / Potwierdzone kompilacje
 - [ ] Hardware acceptance tests / Testy sprzętowe
-- [ ] APRS-IS health-based failover with cooldown / Failover z histerezą
+- [x] Experimental APRS-IS health-based failover code / Kod failover z histerezą
+- [ ] Validate failover on real hardware / Test sprzętowy failover
 - [ ] Verified backup/restore and USB recovery / Test odzyskiwania
 - [ ] Web installer and experimental release / Instalator i wydanie
 - [ ] Upstream review / Przegląd przez autora

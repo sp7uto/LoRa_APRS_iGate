@@ -200,6 +200,7 @@ public:
     String                  blacklist;
     std::vector<WiFi_AP>    wifiAPs;
     WiFi_Auto_AP            wifiAutoAP;
+    bool                    wifiAprsFailover = false;
     BEACON                  beacon;
     APRS_IS                 aprs_is;
     DIGI                    digi;

@@ -17,3 +17,7 @@ Tests: legacy JSON, DHCP, static-only AP, DHCP failure and next AP, static-to-DH
 PL: Kolejność AP można zmieniać przyciskami Move up / Move down (pierwszy profil ma najwyższy priorytet). Walidator sprawdza IPv4, ciągłą maskę /1–/30, adresy hosta, bramę w tej samej podsieci i DNS. DHCP resetuje adres do 0.0.0.0 zgodnie z Arduino-ESP32 2.0.17. Testy hosta: `g++ -std=c++11 -Wall -Wextra -Werror -Iinclude tests/wifi_ipv4_validation.cpp -o /tmp/wifi-ipv4-test && /tmp/wifi-ipv4-test`. Test fizyczny nadal wymagany.
 
 EN: Move up / Move down controls set profile priority (first wins). Validator checks IPv4, contiguous /1–/30 masks, usable hosts, same-subnet gateway and DNS. DHCP reset uses 0.0.0.0 per Arduino-ESP32 2.0.17. The host test command above covers address validation only; hardware testing is still required.
+
+## Update 3 / Aktualizacja 3
+
+Opt-in APRS-IS session health failover, 3 min unhealthy window, 5 min cooldown, 90 s silent session timeout; no external probes or healthy failback. / Opcjonalny failover sesji APRS-IS, 3 min awarii, 5 min odstępu, 90 s ciszy; bez zewnętrznych sond i automatycznego powrotu. Boot authentication wait removed; bounded individual TCP attempts (DNS may still block). / Usunięto nieskończone oczekiwanie przy starcie; pojedyncze próby TCP, DNS może nadal blokować. See Wiki Network-Failover and Testing. Experimental, pending tests.

@@ -69,6 +69,7 @@ bool Configuration::writeFile() {
         data["wifi"]["autoAP"]["enabled"]           = wifiAutoAP.enabled;
         data["wifi"]["autoAP"]["password"]          = wifiAutoAP.password;
         data["wifi"]["autoAP"]["timeout"]           = wifiAutoAP.timeout;
+        data["wifi"]["aprsFailover"] = wifiAprsFailover;
 
         callsign.trim();
         data["callsign"]                            = callsign;
@@ -262,6 +263,7 @@ bool Configuration::readFile() {
         wifiAutoAP.enabled              = data["wifi"]["autoAP"]["enabled"] | true;
         wifiAutoAP.password             = data["wifi"]["autoAP"]["password"] | "1234567890";
         wifiAutoAP.timeout              = data["wifi"]["autoAP"]["timeout"] | 10;
+        wifiAprsFailover = data["wifi"]["aprsFailover"] | false;
 
         if (data["callsign"].isNull()) needsRewrite = true;
         callsign                        = data["callsign"] | "NOCALL-10";
@@ -509,6 +511,7 @@ void Configuration::setDefaultValues() {
     wifiAutoAP.enabled              = true;
     wifiAutoAP.password             = "1234567890";
     wifiAutoAP.timeout              = 10;
+    wifiAprsFailover = false;
 
     callsign                        = "N0CALL-10";
     tacticalCallsign                = "";
