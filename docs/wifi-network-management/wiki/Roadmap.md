@@ -14,3 +14,7 @@
 - [ ] Upstream review / Przegląd przez autora
 
 Items marked complete indicate implementation or documentation only, not hardware validation. / Zaznaczone pozycje nie oznaczają potwierdzonego działania na sprzęcie.
+
+- [x] Factory and OTA packaging workflow definition / Definicja pakowania obrazów
+- [x] Full flash backup and rollback procedure / Instrukcja kopii i odzyskiwania
+- [ ] Verify factory artifact and physical recovery / Weryfikacja obrazu i odzyskiwania

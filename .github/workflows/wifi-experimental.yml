@@ -40,3 +40,34 @@ jobs:
           name: heltec-v3-experimental-ota
           path: .pio/build/heltec_wifi_lora_32_V3/firmware.bin
           if-no-files-found: error
+      - name: Build default SPIFFS image (Heltec only)
+        if: matrix.target == 'heltec_wifi_lora_32_V3'
+        run: pio run --target buildfs -e heltec_wifi_lora_32_V3
+      - name: Package experimental Heltec factory and OTA images
+        if: matrix.target == 'heltec_wifi_lora_32_V3'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'esptool>=5,<6'
+          build=.pio/build/heltec_wifi_lora_32_V3
+          mkdir -p experimental-package
+          cp "$build/firmware.bin" experimental-package/ota_update.bin
+          # Same layout as the upstream ESP32-S3 release workflow.
+          esptool --chip esp32s3 merge-bin \
+            -o experimental-package/web_factory.bin \
+            --flash-mode dio --flash-freq 40m --flash-size 8MB \
+            0x0000 "$build/bootloader.bin" \
+            0x8000 "$build/partitions.bin" \
+            0xe000 "$HOME/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin" \
+            0x10000 "$build/firmware.bin" \
+            0x3D0000 "$build/spiffs.bin"
+          printf '%s\n' "$GITHUB_SHA" > experimental-package/COMMIT.txt
+          printf '%s\n' 'EXPERIMENTAL. Factory image overwrites configuration. Full flash backup required. Do not flash production hardware until verified.' > experimental-package/WARNING.txt
+          (cd experimental-package && sha256sum ota_update.bin web_factory.bin > SHA256SUMS.txt)
+      - name: Upload experimental factory and OTA package
+        if: matrix.target == 'heltec_wifi_lora_32_V3'
+        uses: actions/upload-artifact@v4
+        with:
+          name: heltec-v3-experimental-package
+          path: experimental-package/
+          if-no-files-found: error

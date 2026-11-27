@@ -5,3 +5,9 @@ PL: Connectivity → WiFi Access → Add network. Wpisz SSID i hasło. Wybierz D
 EN: Connectivity → WiFi Access → Add network. Enter SSID and passphrase, then DHCP or Static IPv4. For static addressing supply an unused IP, subnet mask, gateway and primary DNS; secondary DNS is optional. Gateway must be on the same subnet. Use Move up / Move down to set connection order. Keep Auto AP enabled for recovery.
 
 Example only / Przykład (nie kopiować bez sprawdzenia): 192.168.2.50, 255.255.255.0, gateway 192.168.2.1, DNS 9.9.9.9.
+
+## Experimental APRS-IS WiFi failover
+
+PL: Domyślnie OFF. Włączenie jest opcjonalne po testach podstawowych. Wymaga minimum dwóch SSID, aktywnego APRS-IS i wyłączonego Backup Digi. Szczegóły: [Network Failover](Network-Failover).
+
+EN: Default OFF. Enable only after basic connectivity tests. Requires at least two SSIDs, active APRS-IS and backup digi disabled. See [Network Failover](Network-Failover).
