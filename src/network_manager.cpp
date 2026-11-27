@@ -19,6 +19,7 @@
 #include <Arduino.h>
 
 #include "network_manager.h"
+#include "wifi_ipv4_validation.h"
 
  // Constructor
 NetworkManager::NetworkManager() { }
@@ -49,21 +50,23 @@ bool NetworkManager::_connectWiFi(const WiFiNetwork& network) {
     }
 
     WiFi.mode(_wifiAPmode ? WIFI_AP_STA : WIFI_STA);
+    WiFi.setAutoReconnect(false); // The profile manager owns retries and fallback.
 
     // Reset address mode on every attempt, including static -> DHCP.
-    const IPAddress none(255, 255, 255, 255);
+    // Arduino-ESP32 2.0.17 starts DHCP when the local address is zero.
     const IPAddress zero(0, 0, 0, 0);
     if (network.dhcp) {
-        if (!WiFi.config(none, none, none)) {
+        if (!WiFi.config(zero, zero, zero, zero, zero)) {
             Serial.println("[NM] DHCP configuration failed");
             return false;
         }
     } else {
-        IPAddress ip, gateway, subnet, dns1, dns2;
-        if (!ip.fromString(network.ip) || !gateway.fromString(network.gateway) ||
+        IPAddress ip, gateway, subnet, dns1, dns2(0, 0, 0, 0);
+        if (!wifi_ipv4::validProfile(network.ip.c_str(), network.gateway.c_str(),
+                network.subnet.c_str(), network.dns1.c_str(), network.dns2.c_str()) ||
+            !ip.fromString(network.ip) || !gateway.fromString(network.gateway) ||
             !subnet.fromString(network.subnet) || !dns1.fromString(network.dns1) ||
-            (!network.dns2.isEmpty() && !dns2.fromString(network.dns2)) ||
-            ip == zero || gateway == zero || subnet == zero || dns1 == zero) {
+            (!network.dns2.isEmpty() && !dns2.fromString(network.dns2))) {
             Serial.println("[NM] Invalid static IPv4 profile");
             return false;
         }
@@ -386,7 +389,9 @@ bool NetworkManager::isConnected() const {
 
 // Check if WiFi is connected
 bool NetworkManager::isWiFiConnected() const {
-    return _wifiSTAmode && WiFi.status() == WL_CONNECTED && WiFi.localIP() != IPAddress(0, 0, 0, 0);
+    const IPAddress ip = WiFi.localIP();
+    return _wifiSTAmode && WiFi.status() == WL_CONNECTED &&
+           ip != IPAddress(0, 0, 0, 0) && ip != IPAddress(255, 255, 255, 255);
 }
 
 bool NetworkManager::isWifiAPActive() const {

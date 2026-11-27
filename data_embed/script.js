@@ -75,8 +75,6 @@ function loadSettings(settings) {
 
     // Networks
     const wifiNetworks = settings.wifi.AP || [];
-    const networksContainer = document.querySelector(".list-networks");
-
     wifiNetworks.forEach(network => appendWiFiNetwork(network));
     document.getElementById("startupDelay").value                       = settings.other.startupDelay;
 
@@ -527,6 +525,21 @@ function appendWiFiNetwork(network = {}) {
     });
     mode.addEventListener("change", updateMode);
     updateMode();
+    // Network order is the connection priority (top first).
+    for (const [caption, delta] of [["Move up", -1], ["Move down", 1]]) {
+        const move = document.createElement("button");
+        move.type = "button";
+        move.className = "btn btn-sm btn-outline-secondary";
+        move.textContent = caption;
+        move.addEventListener("click", () => {
+            const sibling = delta < 0 ? row.previousElementSibling : row.nextElementSibling;
+            if (!sibling || !sibling.classList.contains("network")) return;
+            if (delta < 0) row.parentElement.insertBefore(row, sibling);
+            else row.parentElement.insertBefore(sibling, row);
+            reindexWiFiNetworks();
+        });
+        row.append(move);
+    }
     const remove = document.createElement("button");
     remove.type = "button";
     remove.className = "btn btn-sm btn-outline-danger";

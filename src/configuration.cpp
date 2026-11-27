@@ -48,16 +48,19 @@ bool Configuration::writeFile() {
     }
     try {
 
-        if (!wifiAPs.empty() && wifiAPs[0].ssid != "") { // We don't want to save Auto AP empty SSID
-            for (int i = 0; i < wifiAPs.size(); i++) {
-                data["wifi"]["AP"][i]["ssid"] = wifiAPs[i].ssid;
-                data["wifi"]["AP"][i]["password"] = wifiAPs[i].password;
-                data["wifi"]["AP"][i]["dhcp"] = wifiAPs[i].dhcp;
-                data["wifi"]["AP"][i]["ip"] = wifiAPs[i].ip;
-                data["wifi"]["AP"][i]["gateway"] = wifiAPs[i].gateway;
-                data["wifi"]["AP"][i]["subnet"] = wifiAPs[i].subnet;
-                data["wifi"]["AP"][i]["dns1"] = wifiAPs[i].dns1;
-                data["wifi"]["AP"][i]["dns2"] = wifiAPs[i].dns2;
+        { // Skip empty placeholder profiles, including those before valid networks.
+            size_t saved = 0;
+            for (size_t i = 0; i < wifiAPs.size(); i++) {
+                if (wifiAPs[i].ssid.isEmpty()) continue;
+                data["wifi"]["AP"][saved]["ssid"] = wifiAPs[i].ssid;
+                data["wifi"]["AP"][saved]["password"] = wifiAPs[i].password;
+                data["wifi"]["AP"][saved]["dhcp"] = wifiAPs[i].dhcp;
+                data["wifi"]["AP"][saved]["ip"] = wifiAPs[i].ip;
+                data["wifi"]["AP"][saved]["gateway"] = wifiAPs[i].gateway;
+                data["wifi"]["AP"][saved]["subnet"] = wifiAPs[i].subnet;
+                data["wifi"]["AP"][saved]["dns1"] = wifiAPs[i].dns1;
+                data["wifi"]["AP"][saved]["dns2"] = wifiAPs[i].dns2;
+                ++saved;
             }
         }
 

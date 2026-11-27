@@ -11,3 +11,9 @@ Testy: stary JSON, DHCP, statyczny IPv4 bez DHCP, przełączenie przy braku DHCP
 Per-network DHCP or static IPv4: IP, gateway, subnet, primary and optional secondary DNS. Older JSON defaults to DHCP. Existing network order retained. Missing IP means failed connection. Do not flash a production gateway before testing.
 
 Tests: legacy JSON, DHCP, static-only AP, DHCP failure and next AP, static-to-DHCP, invalid IP, deleting middle profile, reboot, backup/restore, Auto AP, W5500 regression. Keep a backup and USB recovery. Subnet validation, priorities and APRS-IS health checks remain future work.
+
+## Update 2 / Aktualizacja 2
+
+PL: Kolejność AP można zmieniać przyciskami Move up / Move down (pierwszy profil ma najwyższy priorytet). Walidator sprawdza IPv4, ciągłą maskę /1–/30, adresy hosta, bramę w tej samej podsieci i DNS. DHCP resetuje adres do 0.0.0.0 zgodnie z Arduino-ESP32 2.0.17. Testy hosta: `g++ -std=c++11 -Wall -Wextra -Werror -Iinclude tests/wifi_ipv4_validation.cpp -o /tmp/wifi-ipv4-test && /tmp/wifi-ipv4-test`. Test fizyczny nadal wymagany.
+
+EN: Move up / Move down controls set profile priority (first wins). Validator checks IPv4, contiguous /1–/30 masks, usable hosts, same-subnet gateway and DNS. DHCP reset uses 0.0.0.0 per Arduino-ESP32 2.0.17. The host test command above covers address validation only; hardware testing is still required.
